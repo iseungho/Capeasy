@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_SERVER_HOST = 'http://192.168.0.100';
+export const API_SERVER_HOST = 'http://52.78.93.135';
 const prefix = `${API_SERVER_HOST}/api`;
 
 export const postVideo = async (video) => {
