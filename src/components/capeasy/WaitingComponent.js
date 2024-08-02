@@ -14,7 +14,6 @@ const WaitingComponent = ({ vno }) => {
 
         convertVideo(vno)
             .then((data) => {
-                console.log(data);
                 setIsLoading(false);
                 moveToResult(data);
             })
@@ -36,7 +35,7 @@ const WaitingComponent = ({ vno }) => {
                 <div className="flex flex-col items-center">
                     <div className="loader"></div>
                     <div className="bg-loading-image px-12 py-12 w-[5vw] h-[5vh] bg-cover flex"></div>
-                    <p className="mt-4 text-lg text-gray-700">이미지 파일을 전송 중입니다...</p>
+                    <p className="mt-4 text-lg text-gray-700">추억을 기록하는 중 입니다...</p>
                 </div>
             ) : (
                 <p className="text-lg text-gray-700">이미지 파일 전송이 완료되었습니다!</p>
