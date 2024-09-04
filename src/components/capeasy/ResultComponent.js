@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
 import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
 import "@egjs/react-view360/css/view360.min.css";
-import { API_SERVER_HOST } from "../api/videoApi";
+import { API_SERVER_HOST } from "../../api/videoApi";
 import confetti from "canvas-confetti";
 import useCustomMove from '../../hooks/useCustomMove';
 

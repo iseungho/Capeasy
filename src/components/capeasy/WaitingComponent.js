@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useCustomMove from '../../hooks/useCustomMove';
-import { convertVideo } from '../api/videoApi';
+import { convertVideo } from '../../api/videoApi';
 import ErrorModal from './ErrorModal';
 
 const WaitingComponent = ({ vno }) => {

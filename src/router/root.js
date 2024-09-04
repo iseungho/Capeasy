@@ -1,9 +1,9 @@
 import { Suspense, lazy } from "react";
+import memberRouter from "./memberRouter";
 
 const { createBrowserRouter } = require("react-router-dom");
 
-// 'Loading...' appears while loading the page.
-const Loading = <div>Loading...</div>
+const Loading = <div className="loading-image"></div>
 
 const Main = lazy(() => import("../pages/MainPage"))
 
@@ -19,6 +19,10 @@ const root = createBrowserRouter([
     {
         path: "",
         element: <Suspense fallback={Loading}><Main/></Suspense>
+    },
+    {
+        path: "member",
+        children: memberRouter()
     },
     {
         path: "create",

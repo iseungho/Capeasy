@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import useCustomMove from "../../hooks/useCustomMove";
-import { postVideo } from "../api/videoApi";
+import { postVideo } from "../../api/videoApi";
 import HowToUseModal from "./HowToUseModal";
 import ErrorModal from "./ErrorModal";
 import BeatLoader from "react-spinners/BeatLoader";
