@@ -12,6 +12,9 @@ module.exports = {
           "url('https://ak.picdn.net/shutterstock/videos/1072316771/thumb/1.jpg')",
         "main-slogan-2":
           "url('https://cdn.naturettl.com/wp-content/uploads/2021/06/04110437/how-to-take-panoramas-of-the-night-sky-18-900x506.jpg')",
+        "kakao-sns": "url('./asset/icon/kakao.png')",
+        "naver-sns": "url('./asset/icon/naver.png')",
+
       },
     },
   },
