@@ -3,7 +3,11 @@ import useCustomLogin from "../../hooks/useCustomLogin";
 
 const LoginModal = ({ isOpen, onClose }) => {
     const [loginParam, setLoginParam] = useState({ email: '', password: '', keepLoggedIn: false });
+    const [errors, setErrors] = useState({ email: '', password: '' });
     const { doLogin, moveToPath } = useCustomLogin();
+
+    const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
+    const passwordRegEx = /^[A-Za-z0-9]{8,20}$/;
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -11,18 +15,55 @@ const LoginModal = ({ isOpen, onClose }) => {
             ...prevState,
             [name]: type === 'checkbox' ? checked : value,
         }));
+
+        // 입력값 변화 시 에러 초기화
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            [name]: ''
+        }));
+    };
+
+    const validate = () => {
+        let isValid = true;
+        const newErrors = { email: '', password: '' };
+
+        if (!emailRegEx.test(loginParam.email)) {
+            newErrors.email = '유효한 이메일 주소를 입력하세요.';
+            isValid = false;
+        }
+
+        if (!passwordRegEx.test(loginParam.password)) {
+            newErrors.password = '비밀번호가 유효하지 않습니다.';
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
     };
 
     const handleClickLogin = () => {
+        if (!validate()) {
+            return; // 유효성 검사 실패 시 로그인 진행 중단
+        }
+
         doLogin(loginParam).then(data => {
             if (data.error) {
-                alert("이메일과 패스워드를 다시 확인하세요");
+                setErrors({
+                    email: '',
+                    password: '이메일 또는 비밀번호가 유효하지 않습니다.'
+                });
             } else {
-                alert("로그인 성공");
+                alert("다시 오셨군요! 환영합니다.");
                 moveToPath('/');
                 onClose(); // 로그인 성공 후 모달 닫기
             }
-        });
+        }); 
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleClickLogin();
+        }
     };
 
     const confirmClose = () => {
@@ -64,8 +105,10 @@ const LoginModal = ({ isOpen, onClose }) => {
                         value={loginParam.email}
                         placeholder={"이메일을 입력하세요."}
                         onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                        onKeyPress={handleKeyPress} // Enter 키 입력 감지
+                        className={`w-full p-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-black`}
                     />
+                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                 </div>
 
                 {/* 패스워드 입력 */}
@@ -80,8 +123,10 @@ const LoginModal = ({ isOpen, onClose }) => {
                         placeholder={"비밀번호를 입력하세요."}
                         value={loginParam.password}
                         onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                        onKeyPress={handleKeyPress} // Enter 키 입력 감지
+                        className={`w-full p-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-black`}
                     />
+                    {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                 </div>
 
                 {/* 로그인 유지하기 체크박스 */}
@@ -114,27 +159,15 @@ const LoginModal = ({ isOpen, onClose }) => {
 
                 {/* 소셜 로그인 버튼들 */}
                 <div className="space-y-3">
-                    {/* 네이버 로그인 버튼 */}
                     <button
                         className="w-full flex items-center justify-center bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition"
                     >
-                        {/*<img*/}
-                        {/*    src="/naver-icon.png" // 네이버 아이콘 경로*/}
-                        {/*    alt="Naver"*/}
-                        {/*    className="w-6 h-6 mr-2"*/}
-                        {/*/>*/}
                         Continue with Naver
                     </button>
 
-                    {/* 카카오 로그인 버튼 */}
                     <button
                         className="w-full flex items-center justify-center bg-yellow-400 text-black py-3 rounded-lg hover:bg-yellow-500 transition"
                     >
-                        {/*<img*/}
-                        {/*    src="/kakao-icon.png" // 카카오 아이콘 경로*/}
-                        {/*    alt="Kakao"*/}
-                        {/*    className="w-6 h-6 mr-2"*/}
-                        {/*/>*/}
                         Continue with Kakao
                     </button>
                 </div>
