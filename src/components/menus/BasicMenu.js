@@ -38,9 +38,6 @@ const BasicMenu = ({ children }) => {
                     <nav className="space-x-4 flex items-center">
                         {!loginState.email ? (
                             <>
-                                <Link to={'/member/signup'} className="bg-blue-400 text-white px-6 py-3 rounded-lg hover:bg-blue-500 w-32 h-12 flex items-center justify-center shadow-md hover:shadow-lg transition-shadow text-lg">
-                                    SignUp
-                                </Link>
                                 <button
                                     className="bg-green-400 text-white px-6 py-3 rounded-lg hover:bg-green-500 w-32 h-12 flex items-center justify-center shadow-md hover:shadow-lg transition-shadow text-lg"
                                     onClick={openModal} // Login 버튼 클릭 시 모달 열기
