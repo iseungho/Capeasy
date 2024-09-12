@@ -140,7 +140,10 @@ function MainComponent(props) {
         <h2 className="text-3xl font-bold text-center mb-12">
           우리는 모두 친구 종합 선물 세트
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12" onClick={() => {
+          window.open('https://github.com/WellshCorgi', '_blank');
+        }}
+        >
           <div className="bg-white p-6 rounded-lg shadow-lg text-center">
             <div className="text-4xl mb-4">💸</div>
             <h3 className="text-2xl font-bold mb-2">강 보 찬</h3>
@@ -149,7 +152,12 @@ function MainComponent(props) {
             <p>Open-CV를 활용한 이미지 스티칭 구현</p>
             <p>스티칭을 위한 Flask Rest API 구축</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+          <div
+              className="bg-white p-6 rounded-lg shadow-lg text-center"
+              onClick={() => {
+                window.open('https://github.com/juintination', '_blank');
+              }}
+          >
             <div className="text-4xl mb-4">📊</div>
             <h3 className="text-2xl font-bold mb-2">권 덕 재</h3>
             <h4>Back-end</h4>
@@ -158,7 +166,10 @@ function MainComponent(props) {
             <p>스티칭을 위한 Flask Rest API 구축</p>
             <p>AWS를 활용한 배포 및 CI/CD</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center"  onClick={() => {
+            window.open('https://github.com/iseungho', '_blank');
+          }}
+          >
             <div className="text-4xl mb-4">🔒</div>
             <h3 className="text-2xl font-bold mb-2">이 승 호</h3>
             <h4>Front-end</h4>
@@ -166,7 +177,10 @@ function MainComponent(props) {
             <p>Tailwind를 이용한 UI/UX</p>
             <p>VIEW360을 사용한 VR 뷰어</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center"  onClick={() => {
+            window.open('https://github.com/FIFLove', '_blank');
+          }}
+          >
             <div className="text-4xl mb-4">🔒</div>
             <h3 className="text-2xl font-bold mb-2">김 기 현</h3>
             <h4>Front-end</h4>
