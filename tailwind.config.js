@@ -4,7 +4,6 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        "main-background": "url('./asset/backgrounds/pano.mp4')",
         "loading-image": "url('./asset/images/loading.gif')",
         "loading-image-s": "url('./asset/images/loading.gif')",
         "logo-image": "url('./asset/images/logo.png')",

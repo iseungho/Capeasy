@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useSelector } from "react-redux";
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
 import useCustomMove from "../../hooks/useCustomMove";
-import pano from "../../asset/backgrounds/pano.mp4";
+import LoginModal from "../member/LoginModal";
 
 function MainComponent(props) {
   const { moveToCreate } = useCustomMove();
+  const loginState = useSelector(state => state.loginSlice);
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false); // 모달 상태 추가
+
+  const handleGetStarted = useCallback(() => {
+    if (loginState.email) {
+      moveToCreate();
+    } else {
+      setIsModalOpen(true); // 로그인 모달 열기
+    }
+  }, [loginState.email, moveToCreate]);
 
   const { ref: sloganRef1, inView: sloganInView1 } = useInView({
     triggerOnce: true,
@@ -19,36 +31,49 @@ function MainComponent(props) {
 
   return (
     <div>
-      <section className="bg-main-background bg-cover text-white min-h-screen flex items-center relative">
-        <video
-          autoPlay
-          loop
-          muted
-          className="absolute inset-0 w-full h-full object-cover z-0"
-        >
-          <source src={pano} type="video/mp4" />
-        </video>
-        <div className="container mx-auto px-6 text-center relative z-10">
+      <section className="bg-main-background bg-cover text-white min-h-screen flex items-center relative overflow-hidden">
+        {/* YouTube 비디오 배경 */}
+        <div className="absolute inset-0 w-full h-full z-0">
+          <iframe
+              src="https://www.youtube.com/embed/i_6QY64wefM?autoplay=1&mute=1&loop=1&playlist=i_6QY64wefM&controls=0&modestbranding=0&showinfo=0&rel=0&vq=hd1080"
+              title="pano demo"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
+              style={{
+
+                height: '60vw', // 16:9 비율을 위한 설정
+                minHeight: '100vh',
+                minWidth: '177.78vh', // 16:9 비율을 위한 설정
+              }}
+          ></iframe>
+        </div>
+
+
+        <div className="container mx-auto px-6 text-center relative z-20">
           <h1 className="text-7xl font-bold mb-4">언제든, 누구든, 그리고</h1>
           <p className="text-xl mb-10">
             어디든. 당신의 추억을 생생하게 기록하세요.
           </p>
-          <button
-            className="bg-white text-green-500 px-6 py-3 rounded-full text-lg font-semibold hover:bg-gray-200"
-            onClick={moveToCreate}
-          >
-            Get Started
-          </button>
         </div>
       </section>
+      {/* 플로팅 버튼 */}
+      <button
+          className="fixed top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-green-500 px-8 py-3.5 rounded-full text-lg font-semibold hover:bg-gray-200 shadow-lg z-30"
+          onClick={handleGetStarted} // 수정된 클릭 핸들러
+      >
+        Get Started
+      </button>
+      {/* 로그인 모달 추가 */}
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
       <div className="bg-gray-100 h-[80vh] flex items-center">
         <div className="container mx-auto px-6 py-12 flex flex-col md:flex-row items-center">
           {/* 좌측 섹션 */}
-          <div className="md:w-1/2 w-full flex flex-col items-center md:items-start text-center md:text-center mb-8 md:mb-0">
+          <div
+              className="md:w-1/2 w-full flex flex-col items-center md:items-start text-center md:text-center mb-8 md:mb-0">
             <motion.h1
-              ref={sloganRef1}
-              className="text-4xl font-bold mb-4 md:ml-12"
+                ref={sloganRef1}
+                className="text-4xl font-bold mb-4 md:ml-12"
               initial={{ opacity: 0, y: 20 }}
               animate={{
                 opacity: sloganInView1 ? 1 : 0,

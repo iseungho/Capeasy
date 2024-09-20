@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 import useCustomLogin from "../../hooks/useCustomLogin";
-import LoginModal from "../member/LoginModal"; // LoginModal 추가
+import LoginModal from "../member/LoginModal";
 
 const BasicMenu = ({ children }) => {
     const navigate = useNavigate();
