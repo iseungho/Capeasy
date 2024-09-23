@@ -1,7 +1,6 @@
-import axios from "axios";
+import jwtAxios from "../util/jwtUtil";
 
-export const API_SERVER_HOST = 'http://localhost:8080'
-
+export const API_SERVER_HOST = 'http://localhost:8080';
 const prefix = `${API_SERVER_HOST}/api`;
 
 export const postVideo = async (video) => {
@@ -10,7 +9,7 @@ export const postVideo = async (video) => {
     formData.append('file', video); // 파일과 파일 이름 추가
 
     try {
-        const res = await axios.post(`${prefix}/videos/`, formData, {
+        const res = await jwtAxios.post(`${prefix}/videos/`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -23,12 +22,21 @@ export const postVideo = async (video) => {
 };
 
 export const convertVideo = async (vno) => {
-    const res = await axios.get(`${prefix}/convert/${vno}`)
-    return res.data
-}
+    try {
+        const res = await jwtAxios.get(`${prefix}/convert/${vno}`);
+        return res.data;
+    } catch (error) {
+        console.error('Error converting video:', error);
+        throw error;
+    }
+};
 
 export const getImage = async (ino) => {
-    const res = await axios.get(`${prefix}/images/view/${ino}`)
-
-    return res.data
-}
+    try {
+        const res = await jwtAxios.get(`${prefix}/images/view/${ino}`);
+        return res.data;
+    } catch (error) {
+        console.error('Error getting image:', error);
+        throw error;
+    }
+};
