@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { modifyMember, removeMember } from "../../api/memberApi";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import ResultModal from "../common/ResultModal";
+
 import { updateLoginInfo, clearLoginInfo } from "../../slices/loginSlice";
 
 const initState = {
@@ -22,6 +23,7 @@ const ModifyComponent = () => {
 
     useEffect(() => {
         setMember({ ...loginInfo, email: loginInfo.email })
+        console.log(loginInfo)
     }, [loginInfo])
 
     const handleChange = (e) => {
