@@ -3,15 +3,17 @@ import jwtAxios from "../util/jwtUtil";
 export const API_SERVER_HOST = 'http://localhost:8080';
 const prefix = `${API_SERVER_HOST}/api`;
 
-export const postVideo = async (video) => {
+export const postVideo = async (video, uno) => {
+
     const formData = new FormData();
     formData.append('fileName', video.name);
-    formData.append('file', video); // 파일과 파일 이름 추가
+    formData.append('file', video);
+    formData.append('uno', uno);
 
     try {
         const res = await jwtAxios.post(`${prefix}/videos/`, formData, {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
             }
         });
         return res.data;
@@ -33,7 +35,9 @@ export const convertVideo = async (vno) => {
 
 export const getImage = async (ino) => {
     try {
-        const res = await jwtAxios.get(`${prefix}/images/view/${ino}`);
+        const res = await jwtAxios.get(`${prefix}/images/view/${ino}`, {
+            responseType: 'blob',
+        });
         return res.data;
     } catch (error) {
         console.error('Error getting image:', error);

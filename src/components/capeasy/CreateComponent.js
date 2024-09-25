@@ -4,6 +4,7 @@ import { postVideo } from "../../api/videoApi";
 import HowToUseModal from "./HowToUseModal";
 import ErrorModal from "./ErrorModal";
 import BeatLoader from "react-spinners/BeatLoader";
+import { useSelector } from "react-redux";
 
 function CreateComponent(props) {
   const fileInputRef = useRef(null);
@@ -19,6 +20,8 @@ function CreateComponent(props) {
   const handleDragEnd = () => setActive(false);
 
   const { moveToWait } = useCustomMove();
+
+  const loginInfo = useSelector(state => state.loginSlice)
 
   useEffect(() => {
     if (selectedFile) {
@@ -71,7 +74,7 @@ function CreateComponent(props) {
       setIsLoading(true);
       setError(null);
 
-      postVideo(selectedFile)
+      postVideo(selectedFile, loginInfo.mno)
         .then((data) => {
           console.log(data);
           setIsLoading(false);
