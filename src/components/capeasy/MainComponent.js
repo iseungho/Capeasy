@@ -1,23 +1,11 @@
-import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
 import useCustomMove from "../../hooks/useCustomMove";
-import LoginModal from "../member/LoginModal";
+import pano from "../../asset/backgrounds/pano.mp4";
 
 function MainComponent(props) {
   const { moveToCreate } = useCustomMove();
-  const loginState = useSelector(state => state.loginSlice);
-
-  const [isModalOpen, setIsModalOpen] = React.useState(false); // 모달 상태 추가
-
-  const handleGetStarted = useCallback(() => {
-    if (loginState.email) {
-      moveToCreate();
-    } else {
-      setIsModalOpen(true); // 로그인 모달 열기
-    }
-  }, [loginState.email, moveToCreate]);
 
   const { ref: sloganRef1, inView: sloganInView1 } = useInView({
     triggerOnce: true,
@@ -31,49 +19,36 @@ function MainComponent(props) {
 
   return (
     <div>
-      <section className="bg-main-background bg-cover text-white min-h-screen flex items-center relative overflow-hidden">
-        {/* YouTube 비디오 배경 */}
-        <div className="absolute inset-0 w-full h-full z-0">
-          <iframe
-              src="https://www.youtube.com/embed/i_6QY64wefM?autoplay=1&mute=1&loop=1&playlist=i_6QY64wefM&controls=0&modestbranding=0&showinfo=0&rel=0&vq=hd1080"
-              title="pano demo"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
-              style={{
-
-                height: '60vw', // 16:9 비율을 위한 설정
-                minHeight: '100vh',
-                minWidth: '177.78vh', // 16:9 비율을 위한 설정
-              }}
-          ></iframe>
-        </div>
-
-
-        <div className="container mx-auto px-6 text-center relative z-20">
+      <section className="bg-main-background bg-cover text-white min-h-screen flex items-center relative">
+        <video
+          autoPlay
+          loop
+          muted
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src={pano} type="video/mp4" />
+        </video>
+        <div className="container mx-auto px-6 text-center relative z-10">
           <h1 className="text-7xl font-bold mb-4">언제든, 누구든, 그리고</h1>
           <p className="text-xl mb-10">
             어디든. 당신의 추억을 생생하게 기록하세요.
           </p>
+          <button
+            className="bg-white text-green-500 px-6 py-3 rounded-full text-lg font-semibold hover:bg-gray-200"
+            onClick={moveToCreate}
+          >
+            Get Started
+          </button>
         </div>
       </section>
-      {/* 플로팅 버튼 */}
-      <button
-          className="fixed top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-green-500 px-8 py-3.5 rounded-full text-lg font-semibold hover:bg-gray-200 shadow-lg z-30"
-          onClick={handleGetStarted} // 수정된 클릭 핸들러
-      >
-        Get Started
-      </button>
-      {/* 로그인 모달 추가 */}
-      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
       <div className="bg-gray-100 h-[80vh] flex items-center">
         <div className="container mx-auto px-6 py-12 flex flex-col md:flex-row items-center">
           {/* 좌측 섹션 */}
-          <div
-              className="md:w-1/2 w-full flex flex-col items-center md:items-start text-center md:text-center mb-8 md:mb-0">
+          <div className="md:w-1/2 w-full flex flex-col items-center md:items-start text-center md:text-center mb-8 md:mb-0">
             <motion.h1
-                ref={sloganRef1}
-                className="text-4xl font-bold mb-4 md:ml-12"
+              ref={sloganRef1}
+              className="text-4xl font-bold mb-4 md:ml-12"
               initial={{ opacity: 0, y: 20 }}
               animate={{
                 opacity: sloganInView1 ? 1 : 0,
@@ -165,10 +140,7 @@ function MainComponent(props) {
         <h2 className="text-3xl font-bold text-center mb-12">
           우리는 모두 친구 종합 선물 세트
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12" onClick={() => {
-          window.open('https://github.com/WellshCorgi', '_blank');
-        }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center">
             <div className="text-4xl mb-4">💸</div>
             <h3 className="text-2xl font-bold mb-2">강 보 찬</h3>
@@ -177,12 +149,7 @@ function MainComponent(props) {
             <p>Open-CV를 활용한 이미지 스티칭 구현</p>
             <p>스티칭을 위한 Flask Rest API 구축</p>
           </div>
-          <div
-              className="bg-white p-6 rounded-lg shadow-lg text-center"
-              onClick={() => {
-                window.open('https://github.com/juintination', '_blank');
-              }}
-          >
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
             <div className="text-4xl mb-4">📊</div>
             <h3 className="text-2xl font-bold mb-2">권 덕 재</h3>
             <h4>Back-end</h4>
@@ -191,10 +158,7 @@ function MainComponent(props) {
             <p>스티칭을 위한 Flask Rest API 구축</p>
             <p>AWS를 활용한 배포 및 CI/CD</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center"  onClick={() => {
-            window.open('https://github.com/iseungho', '_blank');
-          }}
-          >
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
             <div className="text-4xl mb-4">🔒</div>
             <h3 className="text-2xl font-bold mb-2">이 승 호</h3>
             <h4>Front-end</h4>
@@ -202,10 +166,7 @@ function MainComponent(props) {
             <p>Tailwind를 이용한 UI/UX</p>
             <p>VIEW360을 사용한 VR 뷰어</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center"  onClick={() => {
-            window.open('https://github.com/FIFLove', '_blank');
-          }}
-          >
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
             <div className="text-4xl mb-4">🔒</div>
             <h3 className="text-2xl font-bold mb-2">김 기 현</h3>
             <h4>Front-end</h4>
@@ -215,6 +176,40 @@ function MainComponent(props) {
           </div>
         </div>
       </section>
+
+      <footer className="bg-gray-800 text-white py-6">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-lg">&copy; 2024 CapEasy. All rights reserved.</p>
+          <div className="flex justify-center space-x-6 mt-4">
+            <a
+              href="#"
+              className="text-gray-400 hover:text-white transition duration-300"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-white transition duration-300"
+            >
+              Terms of Service
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-white transition duration-300"
+            >
+              Contact Us
+            </a>
+            <a
+              href="#"
+              className="text-gray-400 hover:text-white transition duration-300"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.04c-5.48 0-9.96 4.48-9.96 9.96 0 4.38 2.86 8.09 6.84 9.38.5.1.66-.22.66-.48v-1.68c-2.78.6-3.36-1.34-3.36-1.34-.44-1.12-1.08-1.42-1.08-1.42-.88-.6.06-.6.06-.6 1 .08 1.5 1 1.5 1 .9 1.52 2.28 1.08 2.84.82.1-.66.34-1.08.62-1.34-2.22-.26-4.56-1.12-4.56-5 0-1.1.38-2 .98-2.7-.1-.26-.44-1.32.08-2.76 0 0 .84-.28 2.76 1.06a9.57 9.57 0 012.52-.34c.86 0 1.74.12 2.52.34 1.92-1.34 2.76-1.06 2.76-1.06.52 1.44.18 2.5.08 2.76.62.7.98 1.6.98 2.7 0 3.88-2.34 4.74-4.56 5 .36.3.68.92.68 1.88v2.82c0 .26.16.58.68.48a10.01 10.01 0 006.84-9.38c0-5.48-4.48-9.96-9.96-9.96z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

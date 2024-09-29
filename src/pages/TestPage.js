@@ -1,85 +1,74 @@
-import React, { useEffect, useMemo, useState } from "react";
-import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
-import "@egjs/react-view360/css/view360.min.css";
-import BasicLayout from '../layouts/BasicLayout';
-import confetti from "canvas-confetti";
-import useCustomMove from "../hooks/useCustomMove";
+import React, { useState } from "react";
+import WriteModal from "../components/common/WriteModal"; // 글 작성 모달 컴포넌트
+import { postBoard } from "../api/boardApi";
+import useCustomLogin from "../hooks/useCustomLogin";
 
 const TestPage = () => {
-    const { refresh } = useCustomMove();
-    const [imageSrc, setImageSrc] = useState(null);
+  const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+  const [ino, setIno] = useState(null); // 초기 INO 상태
 
-    useEffect(() => {
-        confetti({
-            particleCount: 200,
-            spread: 60,
-        });
-    }, [refresh]);
+  const { loginState } = useCustomLogin(); // 로그인 상태
 
-    useEffect(() => {
-        // 로컬 파일 경로 읽기
-        const filePath = 'C:/CapstoneDesign/anywhere/src/asset/images/test.jpg';
-        fetch(filePath)
-            .then(response => response.blob())
-            .then(blob => {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setImageSrc(reader.result);
-                };
-                reader.readAsDataURL(blob);
-            })
-            .catch(error => console.error('File read failed:', error));
-    }, []);
+  // 글 작성 버튼 클릭 시 모달 열기
+  const handleOpenWriteModal = () => {
+    setIsWriteModalOpen(true);
+  };
 
-    const projection = useMemo(() => new EquirectProjection({
-        src: imageSrc,
-    }), [imageSrc]);
+  // 글 작성 완료 시 처리
+  const handleSubmitWrite = (data) => {
+    const { title, content, ino } = data;
 
-    const controlBar = useMemo(() => new ControlBar({
-        FullscreenButton: true,
-    }), []);
+    // 로그인 상태에서 사용자 정보를 가져와서 작성
+    const writerId = loginState.mno;
+    const writerEmail = loginState.email;
+    const writerNickname = loginState.nickname;
 
-    const handleDownloadClick = async (e) => {
-        e.preventDefault();
+    console.log(writerEmail+writerId+writerNickname)
 
-        try {
-            const link = document.createElement('a');
-            link.href = imageSrc;
-            link.download = 'test.jpg'; // Default filename for downloaded file
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Download failed:', error);
-        }
+    const boardData = {
+      title,
+      content,
+      ino,
+      writerId,
+      writerEmail,
+      writerNickname
     };
 
-    return (
-        <BasicLayout>
-            <div>
-                <div className="flex justify-center items-center mt-36">
-                    <div className="h-1/2 w-1/2">
-                        {imageSrc && (
-                            <View360
-                                className="is-16by9"
-                                autoplay={true}
-                                projection={projection}
-                                plugins={[controlBar]}
-                            />
-                        )}
-                    </div>
-                </div>
-                <div className="flex justify-center mt-10">
-                    <button
-                        onClick={handleDownloadClick}
-                        className="bg-green-500 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-600 transition-shadow shadow-md hover:shadow-lg"
-                    >
-                        ⬇️ 원본 다운로드
-                    </button>
-                </div>
-            </div>
-        </BasicLayout>
-    );
-}
+    postBoard(boardData)
+      .then(() => {
+        console.log("게시글이 성공적으로 작성되었습니다.");
+      })
+      .catch((error) => {
+        console.error("게시글 작성 중 오류 발생:", error);
+      });
+
+    // 모달 닫기
+    setIsWriteModalOpen(false);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-3xl font-bold mb-8">테스트 페이지</h1>
+
+      {/* 글 작성 버튼 */}
+      <button
+        className="px-6 py-3 mb-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition"
+        onClick={handleOpenWriteModal}
+      >
+        글 작성 버튼
+      </button>
+
+      {/* 글 작성 모달 */}
+      {isWriteModalOpen && (
+        <WriteModal
+          isOpen={isWriteModalOpen}
+          onClose={() => setIsWriteModalOpen(false)}
+          onSubmit={handleSubmitWrite}
+          ino={ino} // 초기값으로 전달
+        />
+      )}
+    </div>
+  );
+};
 
 export default TestPage;

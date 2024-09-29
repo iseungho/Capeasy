@@ -33,17 +33,6 @@ const LoginModal = ({ isOpen, onClose }) => {
         }));
     };
 
-    // 엔터 키 감지 핸들러
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            if (isLogin) {
-                handleClickLogin();
-            } else {
-                handleClickSignup();
-            }
-        }
-    };
-
     // 로그인 유효성 검사
     const validateLogin = () => {
         let isValid = true;
@@ -142,6 +131,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     return (
         <div
             className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
+            onClick={confirmClose}
         >
             <div
                 className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md relative"
@@ -167,7 +157,6 @@ const LoginModal = ({ isOpen, onClose }) => {
                         value={isLogin ? loginParam.email : signupParam.email}
                         placeholder="이메일을 입력하세요."
                         onChange={handleChange}
-                        onKeyDown={handleKeyDown}
                         className={`w-full p-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-black`}
                     />
                     {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
@@ -184,7 +173,6 @@ const LoginModal = ({ isOpen, onClose }) => {
                         value={isLogin ? loginParam.password : signupParam.password}
                         placeholder="비밀번호를 입력하세요."
                         onChange={handleChange}
-                        onKeyDown={handleKeyDown}
                         className={`w-full p-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-black`}
                     />
                     {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
@@ -202,7 +190,6 @@ const LoginModal = ({ isOpen, onClose }) => {
                             value={signupParam.nickname}
                             placeholder="닉네임을 입력하세요."
                             onChange={handleChange}
-                            onKeyDown={handleKeyDown}
                             className={`w-full p-2 border ${errors.nickname ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-black`}
                         />
                         {errors.nickname && <p className="text-red-500 text-sm mt-1">{errors.nickname}</p>}

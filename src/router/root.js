@@ -1,5 +1,6 @@
 import { Suspense, lazy } from "react";
 import memberRouter from "./memberRouter";
+import boardRouter from "./boardRouter";
 
 const { createBrowserRouter } = require("react-router-dom");
 
@@ -13,6 +14,8 @@ const Waiting = lazy(() => import("../pages/WaitingPage"))
 
 const Result = lazy(() => import("../pages/ResultPage"))
 
+const Write = lazy(() => import("../pages/WritePage"))
+
 const Test = lazy(() => import("../pages/TestPage"))
 
 const root = createBrowserRouter([
@@ -25,6 +28,10 @@ const root = createBrowserRouter([
         children: memberRouter()
     },
     {
+        path: "board",
+        children: boardRouter()
+    },
+    {
         path: "create",
         element: <Suspense fallback={Loading}><Create/></Suspense>
     },
@@ -35,6 +42,10 @@ const root = createBrowserRouter([
     {
         path: "result/:ino",
         element: <Suspense fallback={Loading}><Result/></Suspense>
+    },
+    {
+        path: "write",
+        element: <Suspense fallback={Loading}><Write/></Suspense>
     },
     {
         path: "test",
