@@ -12,6 +12,9 @@ const refreshJWT = async (accessToken, refreshToken) => {
 
     const res = await axios.get(`${host}/api/member/refresh?refreshToken=${refreshToken}`, header)
 
+    console.log("----------------------")
+    console.log(res.data)
+
     return res.data
 }
 
@@ -38,7 +41,7 @@ const beforeReq = (config) => {
 
     const { accessToken } = memberInfo
 
-    //  Authorization 헤더 처리
+    //  Authorization 헤더 처리 
     config.headers.Authorization = `Bearer ${accessToken}`
     return config
 }

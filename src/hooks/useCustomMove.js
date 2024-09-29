@@ -1,5 +1,13 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom"
+
+const getNum = (param, defaultValue) => {
+    if(!param) {
+        return defaultValue
+    }
+    return parseInt(param)
+
+}
 
 const useCustomMove = () => {
 
@@ -7,10 +15,25 @@ const useCustomMove = () => {
 
     const [refresh, setRefresh] = useState(false)
 
+    const [queryParams] = useSearchParams()
+
+    const page = getNum(queryParams.get('page'), 1)
+    const size = getNum(queryParams.get('size'), 10)
+
+    const mypage = getNum(queryParams.get('page'), 1)
+    const mysize = getNum(queryParams.get('size'), 3)
+
+    const queryDefault = createSearchParams({page, size}).toString()
+
+    const moveToMain = () => {
+        navigate({
+            pathname: `/`,
+        })
+    }
+
     const moveToCreate = () => {
         navigate({
             pathname: `../create`,
-
         })
     }
 
@@ -30,7 +53,45 @@ const useCustomMove = () => {
         })
     }
 
-    return {moveToCreate, moveToWait, moveToResult}
+    const moveToBoardList = (pageParam) => {
+        let queryStr = ""
+
+        if(pageParam) {
+            const pageNum = getNum(pageParam.page, 1)
+            const sizeNum = getNum(pageParam.size, 10)
+
+            queryStr = createSearchParams({page:pageNum, size:sizeNum}).toString()
+        } else {
+            queryStr = queryDefault
+        } 
+
+        setRefresh(!refresh)
+        
+        navigate({
+            pathname: `/board/list`, search:queryStr
+        })
+    }
+
+    const moveToMyPage = (pageParam) => {
+        let queryStr = ""
+
+        if(pageParam) {
+            const pageNum = getNum(pageParam.mypage, 1)
+            const sizeNum = getNum(pageParam.mysize, 3)
+
+            queryStr = createSearchParams({page:pageNum, size:sizeNum}).toString()
+        } else {
+            queryStr = queryDefault
+        } 
+
+        setRefresh(!refresh)
+        
+        navigate({
+            pathname: `/member/my`, search:queryStr
+        })
+    }
+
+    return {moveToMain, moveToBoardList, moveToCreate, moveToWait, moveToResult, moveToMyPage, page, size, mypage, mysize, refresh, setRefresh}
 }
 
 export default useCustomMove

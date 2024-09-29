@@ -2,7 +2,7 @@ import React from "react";
 
 const PageComponent = ({ serverData, movePage }) => {
     return (
-        <div className="m-6 flex justify-center">
+        <div className="flex justify-center">
             {serverData.prev ?
                 <div className="m-2 p-2 w-16 text-center font-bold text-blue-400 "
                     onClick={() => movePage({ page: serverData.prevPage })}>

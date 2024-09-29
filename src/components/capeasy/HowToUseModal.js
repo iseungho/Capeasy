@@ -11,7 +11,7 @@ function HowToUseModal({ onClose }) {
   };
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg text-center w-auto h-auto">
+      <div className="bg-white p-8 rounded-lg shadow-lg text-center w-1/3 h-1/4">
         <h2 className="text-2xl font-semibold mb-6">사용 방법</h2>
         <p className="mb-4">
           동영상 촬영을 시작하고 모든 공간이 담기도록 360°로 돌며 찍어주세요.

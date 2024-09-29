@@ -1,16 +1,16 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
 import "@egjs/react-view360/css/view360.min.css";
-import { getImage } from '../../api/videoApi';
+import { API_SERVER_HOST } from "../../api/videoApi";
 import confetti from "canvas-confetti";
 import useCustomMove from '../../hooks/useCustomMove';
+import WriteModal from "../common/WriteModal";  // WriteModal 임포트
+
+const host = API_SERVER_HOST;
 
 const ResultComponent = ({ ino }) => {
-    const { refresh } = useCustomMove();
-    const [projection, setProjection] = useState(null);
-    const controlBar = useMemo(() => new ControlBar({
-        FullscreenButton: true,
-    }), []);
+    const { moveToBoardList, refresh } = useCustomMove();
+    const [isWriteModalOpen, setIsWriteModalOpen] = useState(false); // 모달 상태 추가
 
     useEffect(() => {
         confetti({
@@ -19,54 +19,60 @@ const ResultComponent = ({ ino }) => {
         });
     }, [refresh]);
 
-    useEffect(() => {
-        // 이미지 로드 및 projection 설정
-        const loadImage = async () => {
-            try {
-                const imageBlob = await getImage(ino); // Blob 형태의 이미지 데이터 가져오기
-                const blobUrl = URL.createObjectURL(imageBlob);
-                setProjection(new EquirectProjection({ src: blobUrl }));
-            } catch (error) {
-                console.error('Error loading image:', error);
-            }
-        };
+    const projection = useMemo(() => new EquirectProjection({
+        src: `${host}/api/images/view/${ino}`,
+    }), [ino]);
 
-        loadImage();
-    }, [ino]);
+    const controlBar = useMemo(() => new ControlBar({
+        FullscreenButton: true,
+    }), []);
 
     const handleDownloadClick = async (e) => {
         e.preventDefault();
 
         try {
-            const imageBlob = await getImage(ino); // Blob 형태의 이미지 데이터 가져오기
-            const url = window.URL.createObjectURL(imageBlob);
+            const response = await fetch(`${host}/api/images/view/${ino}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = 'image'; // 다운로드 파일 이름 설정
+            link.download = 'image'; // Default filename for downloaded file
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            window.URL.revokeObjectURL(url); // URL 객체 해제
+            window.URL.revokeObjectURL(url); // Clean up
         } catch (error) {
             console.error('Download failed:', error);
         }
     };
 
+    // 글 작성 버튼 클릭 시 모달 열기
+    const handleWriteClick = () => {
+        setIsWriteModalOpen(true);
+    };
+
+    // 모달 닫기
+    const handleCloseWriteModal = () => {
+        setIsWriteModalOpen(false);
+        moveToBoardList();
+    };
+
     return (
         <div>
             <div className="flex justify-center items-center mt-36">
-                <div className="h-2/3 w-2/3">
-                    {projection && (
-                        <View360
-                            className="is-16by9"
-                            autoplay={true}
-                            projection={projection}
-                            plugins={[controlBar]}
-                        />
-                    )}
+                <div className="h-1/2 w-1/2">
+                    <View360
+                        className="is-16by9"
+                        autoplay={true}
+                        projection={projection}
+                        plugins={[controlBar]}
+                    />
                 </div>
             </div>
-            <div className="flex justify-center m-10">
+            <div className="flex justify-center mt-10">
                 <button
                     onClick={handleDownloadClick}
                     className="bg-green-500 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-600 transition-shadow shadow-md hover:shadow-lg"
@@ -74,6 +80,20 @@ const ResultComponent = ({ ino }) => {
                     ⬇️ 원본 다운로드
                 </button>
             </div>
+
+            <div className="flex justify-center mt-10">
+                <button
+                    onClick={handleWriteClick}  // 글 작성 버튼 클릭 시 모달 열기
+                    className="bg-green-500 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-600 transition-shadow shadow-md hover:shadow-lg"
+                >
+                    🖋️ 글 작성
+                </button>
+            </div>
+
+            {/* WriteModal 추가 */}
+            {isWriteModalOpen && (
+                <WriteModal isOpen={isWriteModalOpen} onClose={handleCloseWriteModal} ino={ino} />
+            )}
         </div>
     );
 };

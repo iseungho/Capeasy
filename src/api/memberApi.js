@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios"
 import jwtAxios from "../util/jwtUtil"
 
 export const API_SERVER_HOST = 'http://localhost:8080'
@@ -64,4 +64,8 @@ export const removeMember = async (mno) => {
     }
     const res = await jwtAxios.delete(`${host}/${mno}`);
     return res.data;
+}
+
+export const getMember = async (mno) => {
+    
 }
