@@ -23,9 +23,10 @@ const ResultComponent = ({ ino }) => {
         // 이미지 로드 및 projection 설정
         const loadImage = async () => {
             try {
-                const imageBlob = await getImage(ino); // Blob 형태의 이미지 데이터 가져오기
-                const blobUrl = URL.createObjectURL(imageBlob);
-                setProjection(new EquirectProjection({ src: blobUrl }));
+                const image = await getImage(ino); // JSON 형식의 응답 받기
+                const base64Data = image.fileContent; // JSON 응답에서 base64 문자열을 가져옵니다.
+                const blobUrl = createBase64DataToBlob(base64Data); // Blob URL 생성
+                setProjection(new EquirectProjection({ src: blobUrl })); // EquirectProjection에 Blob URL 설정
             } catch (error) {
                 console.error('Error loading image:', error);
             }
@@ -34,19 +35,32 @@ const ResultComponent = ({ ino }) => {
         loadImage();
     }, [ino]);
 
+    const createBase64DataToBlob = (base64Data) => {
+        const byteCharacters = atob(base64Data); // base64 문자열을 디코드
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' }); // 적절한 MIME 타입 설정
+        return URL.createObjectURL(blob); // Blob URL로 변환
+    };
+
     const handleDownloadClick = async (e) => {
         e.preventDefault();
 
         try {
-            const imageBlob = await getImage(ino); // Blob 형태의 이미지 데이터 가져오기
-            const url = window.URL.createObjectURL(imageBlob);
+            const image = await getImage(ino); // JSON 형식의 응답 받기
+            const base64Data = image.fileContent; // JSON 응답에서 base64 문자열을 가져옵니다.
+            const blobUrl = createBase64DataToBlob(base64Data); // Blob URL 생성
+
             const link = document.createElement('a');
-            link.href = url;
+            link.href = blobUrl;
             link.download = 'image'; // 다운로드 파일 이름 설정
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            window.URL.revokeObjectURL(url); // URL 객체 해제
+            URL.revokeObjectURL(blobUrl); // URL 객체 해제
         } catch (error) {
             console.error('Download failed:', error);
         }

@@ -18,29 +18,18 @@ export const postVideo = async (video, uno) => {
         });
         return res.data;
     } catch (error) {
-        console.error('Error uploading video:', error);
-        throw error;
+        return { error: error.response ? error.response.data : error.message };
     }
 };
 
 export const convertVideo = async (vno) => {
-    try {
-        const res = await jwtAxios.get(`${prefix}/convert/${vno}`);
-        return res.data;
-    } catch (error) {
-        console.error('Error converting video:', error);
-        throw error;
-    }
+    const res = await jwtAxios.get(`${prefix}/convert/${vno}`);
+    return res.data;
+
 };
 
 export const getImage = async (ino) => {
-    try {
-        const res = await jwtAxios.get(`${prefix}/images/view/${ino}`, {
-            responseType: 'blob',
-        });
-        return res.data;
-    } catch (error) {
-        console.error('Error getting image:', error);
-        throw error;
-    }
+    const res = await jwtAxios.get(`${prefix}/images/view/${ino}`);
+    return res.data;
+
 };
