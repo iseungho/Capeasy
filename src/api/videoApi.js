@@ -33,6 +33,16 @@ export const convertVideo = async (vno) => {
     }
 };
 
+export const deleteVideo = async (vno) => {
+    try {
+        const res = await jwtAxios.delete(`${prefix}/${vno}`);
+        return res.data;
+    } catch (error) {
+        console.error('Error converting video:', error);
+        throw error;
+    }
+};
+
 export const getImage = async (ino) => {
     try {
         const res = await jwtAxios.get(`${prefix}/images/view/${ino}`, {

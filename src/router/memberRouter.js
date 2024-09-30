@@ -5,6 +5,7 @@ const Login = lazy(() => import("../pages/member/LoginPage"))
 const Logout = lazy(() => import("../pages/member/LogoutPage"))
 const CheckPassword = lazy(() => import("../pages/member/CheckPasswordPage"))
 const Signup = lazy(() => import("../pages/member/SignupPage"));
+const My = lazy(() => import("../pages/member/MyPage"));
 
 const memberRouter = () => {
     return [
@@ -23,6 +24,10 @@ const memberRouter = () => {
         {
             path: "signup",
             element: <Suspense fallback={Loading}><Signup /></Suspense>,
+        },
+        {
+            path: "my",
+            element: <Suspense fallback={Loading}><My/></Suspense>
         }
     ]
 }
