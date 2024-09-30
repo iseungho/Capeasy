@@ -12,6 +12,8 @@ const refreshJWT = async (accessToken, refreshToken) => {
 
     const res = await axios.get(`${host}/api/member/refresh?refreshToken=${refreshToken}`, header)
 
+    console.log("Refresh token..............")
+
     return res.data
 }
 
@@ -61,7 +63,6 @@ const beforeRes = async (res) => {
         const memberCookieValue = getCookie("member")
 
         const result = await refreshJWT(memberCookieValue.accessToken, memberCookieValue.refreshToken)
-        console.log("refreshJWT RESULT", result)
 
         memberCookieValue.accessToken = result.accessToken
         memberCookieValue.refreshToken = result.refreshToken
