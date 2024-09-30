@@ -1,5 +1,6 @@
 import { Suspense, lazy } from "react";
 import memberRouter from "./memberRouter";
+import boardRouter from "./boardRouter";
 
 const { createBrowserRouter } = require("react-router-dom");
 
@@ -23,6 +24,10 @@ const root = createBrowserRouter([
     {
         path: "member",
         children: memberRouter()
+    },
+    {
+        path: "board",
+        children: boardRouter()
     },
     {
         path: "create",

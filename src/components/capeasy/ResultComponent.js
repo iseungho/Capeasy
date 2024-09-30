@@ -4,10 +4,16 @@ import "@egjs/react-view360/css/view360.min.css";
 import { getImage } from '../../api/videoApi';
 import confetti from "canvas-confetti";
 import useCustomMove from '../../hooks/useCustomMove';
+import WriteModal from '../common/WriteModal';
 
 const ResultComponent = ({ ino }) => {
     const { refresh } = useCustomMove();
     const [projection, setProjection] = useState(null);
+
+    const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+    const openWriteModal = () => setIsWriteModalOpen(true);
+    const closeWriteModal = () => setIsWriteModalOpen(false);
+
     const controlBar = useMemo(() => new ControlBar({
         FullscreenButton: true,
     }), []);
@@ -87,6 +93,13 @@ const ResultComponent = ({ ino }) => {
                 >
                     ⬇️ 원본 다운로드
                 </button>
+                <button
+                    onClick={openWriteModal} 
+                    className="bg-green-500 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-600 transition-shadow shadow-md hover:shadow-lg"
+                >
+                    🖋️ 게시글 작성
+                </button>
+                <WriteModal isOpen={isWriteModalOpen} onClose={closeWriteModal} ino={ino}/>
             </div>
         </div>
     );
