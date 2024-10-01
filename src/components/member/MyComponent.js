@@ -4,8 +4,9 @@ import useCustomLogin from "../../hooks/useCustomLogin";
 import LoginModal from "../member/LoginModal";
 
 import { getBoardListByMno } from "../../api/boardApi";
-import { getThumbnail } from "../../api/imageApi";  
+import { getThumbnail } from "../../api/imageApi";
 import useCustomMove from "../../hooks/useCustomMove";
+import BoardModal from "../board/BoardModal";
 
 const myBoardListInitState = {
     boardList: [],
@@ -25,7 +26,8 @@ const MyComponent = () => {
     const [myBoardList, setMyBoardList] = useState(myBoardListInitState);
     const [fetching, setFetching] = useState(false);
     const { isLogin, loginState } = useCustomLogin();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isBoardModalOpen, setIsBoardModalOpen] = useState(null);
     const navigate = useNavigate();
     const [imageMap, setImageMap] = useState({}); // 각 게시글 이미지 상태
 
@@ -53,13 +55,13 @@ const MyComponent = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!loginState.mno) return; 
+            if (!loginState.mno) return;
             setFetching(true);
             try {
                 const responseData = await getBoardListByMno({ page, size }, loginState.mno);
                 setMyBoardList({
                     ...myBoardListInitState,
-                    boardList: responseData.dtoList || [] 
+                    boardList: responseData.dtoList || []
                 });
 
                 // 각 게시글의 이미지 불러오기
@@ -83,20 +85,25 @@ const MyComponent = () => {
         navigate('/');
     }, [navigate]);
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => {
-        setIsModalOpen(false);
+    const openLoginModal = () => setIsLoginModalOpen(true);
+
+    const openBoardModal = (bno) => {
+        setIsBoardModalOpen(isBoardModalOpen === bno ? null : bno);
+    };
+
+    const closeLoginModal = () => {
+        setIsLoginModalOpen(false);
         moveMain();
     };
 
     useEffect(() => {
         if (!isLogin) {
-            openModal();
+            openLoginModal();
         }
     }, [isLogin]);
 
     if (!isLogin) {
-        return <LoginModal isOpen={isModalOpen} onClose={closeModal} />;
+        return <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />;
     }
 
     return (
@@ -121,26 +128,35 @@ const MyComponent = () => {
                     <p>Loading...</p>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {myBoardList.boardList.length === 0 ? (
-                            <p>작성한 게시글이 없습니다.</p>
-                        ) : (
-                            myBoardList.boardList.map(board => (
-                                <div key={board.bno} className="border rounded-lg overflow-hidden bg-white shadow hover:shadow-lg transition-shadow">
-                                    <img
-                                        className="w-full h-44 object-cover"
-                                        src={imageMap[board.bno]}
-                                        alt="Board Thumbnail"
-                                    />
-                                    <p className="p-4 text-center text-gray-800">{board.title}</p>
-                                </div>
-                            ))
-                        )}
+                        {myBoardList.boardList.map(board => (
+                            <div
+                                key={board.bno}
+                                className="border rounded-lg overflow-hidden bg-white shadow hover:shadow-lg transition-shadow"
+                                onClick={() => openBoardModal(board.bno)} // 여기에서 함수 호출을 화살표 함수로 감쌈
+                            >
+                                <img
+                                    className="w-full h-44 object-cover"
+                                    src={imageMap[board.bno]}
+                                    alt="Board Thumbnail"
+                                />
+                                <p className="p-4 text-center text-gray-800">{board.title}</p>
+                            </div>
+                        ))}
+
                     </div>
                 )}
             </div>
 
             {/* LoginModal */}
-            <LoginModal isOpen={isModalOpen} onClose={closeModal} />
+            <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+
+            {/* BoardModal */}
+            <BoardModal
+                isOpen={isBoardModalOpen !== null}
+                onClose={() => setIsBoardModalOpen(null)} // 상태 업데이트를 위한 함수 전달
+                bno={isBoardModalOpen}
+            />
+
         </div>
     );
 };
