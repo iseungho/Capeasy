@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getBoard, putBoard } from "../../api/boardApi"; // 게시글 조회 및 수정 API 호출
 import useCustomLogin from "../../hooks/useCustomLogin"; // 로그인 상태 훅
-import useCustomMove from "../../hooks/useCustomMove";
 
 const ModifyModal = ({ isOpen, onClose, bno }) => {
   const [title, setTitle] = useState("");
@@ -9,7 +8,6 @@ const ModifyModal = ({ isOpen, onClose, bno }) => {
   const [loading, setLoading] = useState(false);
   
   const { loginState } = useCustomLogin(); // 로그인 상태 정보
-  const { refresh, setRefresh } = useCustomMove();
 
   useEffect(() => {
       // 모달이 열릴 때만 데이터 불러오기
@@ -53,7 +51,6 @@ const ModifyModal = ({ isOpen, onClose, bno }) => {
       // 서버에 수정된 게시글 데이터를 보내기
       await putBoard(bno, updatedBoardData);
       alert("게시글이 수정되었습니다.");
-      setRefresh(!refresh)
       // 수정 완료 후 모달 닫기
       onClose();
     } catch (error) {
