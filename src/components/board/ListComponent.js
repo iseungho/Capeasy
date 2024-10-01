@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import BoardModal from "./BoardModal";
-import { getBoardList } from "../../api/boardApi";
+import BoardInfoModal from "../common/BoardInfoModal";
+import ModifyModal from "../common/ModifyModal"; // 수정 모달 임포트
+import { getBoardList, deleteBoard } from "../../api/boardApi"; // deleteBoard 임포트
 import { getThumbnail } from "../../api/imageApi";
 import { getHeartListByBno, postHearts, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
 import useCustomMove from "../../hooks/useCustomMove";
@@ -23,9 +25,11 @@ const ListComponent = () => {
     const { page, size, refresh, setRefresh } = useCustomMove();
     const [serverData, setServerData] = useState(initListState);
     const [fetching, setFetching] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(null);
+    const [isBoardModalOpen, setIsBoardModalOpen] = useState(null);
+    const [isBoardInfoModalOpen, setIsBoardInfoModalOpen] = useState(null);
+    const [isModifyModalOpen, setIsModifyModalOpen] = useState(null);
     const [likedBoards, setLikedBoards] = useState({});
-    const [imageMap, setImageMap] = useState({}); // 각 게시글 이미지 상태
+    const [imageMap, setImageMap] = useState({});
 
     const { loginState } = useCustomLogin();
 
@@ -33,7 +37,7 @@ const ListComponent = () => {
         try {
             const image = await getThumbnail(ino);
             const base64Data = image.fileContent;
-            return createBase64DataToBlob(base64Data); // Blob URL 반환
+            return createBase64DataToBlob(base64Data);
         } catch (error) {
             console.error('Error loading image:', error);
             return null;
@@ -48,14 +52,13 @@ const ListComponent = () => {
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        return URL.createObjectURL(blob); // Blob URL로 변환
+        return URL.createObjectURL(blob);
     };
 
     useEffect(() => {
         const fetchBoardAndLikes = async () => {
             setFetching(true);
             try {
-                // 게시글 목록 불러오기
                 const responseData = await getBoardList({ page, size });
                 const boardList = responseData.dtoList || [];
 
@@ -64,7 +67,6 @@ const ListComponent = () => {
                     boardList
                 });
 
-                // 각 게시글의 이미지 불러오기
                 const newImageMap = {};
                 for (const board of boardList) {
                     const image = await loadThumbnail(board.ino);
@@ -72,7 +74,6 @@ const ListComponent = () => {
                 }
                 setImageMap(newImageMap);
 
-                // 좋아요 상태 불러오기
                 if (loginState?.mno && boardList.length > 0) {
                     const likesState = {};
                     for (const board of boardList) {
@@ -93,9 +94,32 @@ const ListComponent = () => {
         fetchBoardAndLikes();
     }, [loginState, page, size, refresh, loadThumbnail]);
 
-    const handleModalOpen = (bno) => {
-        setIsModalOpen(isModalOpen === bno ? null : bno);
+    const handleBoardModalOpen = (bno) => {
+        setIsBoardModalOpen(isBoardModalOpen === bno ? null : bno);
     };
+
+    const handleBoardInfoModalOpen = (bno) => {
+        setIsBoardInfoModalOpen(isBoardInfoModalOpen === bno ? null : bno);
+    };
+
+    const handleModifyBoard = async (bno) => {
+        setIsModifyModalOpen(isModifyModalOpen === bno ? null : bno);
+    };
+    
+    const handleDeleteBoard = async (bno) => {
+        try {
+            await deleteBoard(bno);
+            alert('게시글이 삭제되었습니다.');
+            setRefresh(!refresh);
+        } catch (error) {
+            console.error("Error deleting board:", error);
+        }
+    };
+
+    const closeModifyModal = async () => {
+        setIsModifyModalOpen(null);
+        setRefresh(!refresh);
+    }
 
     const handleLikeToggle = async (bno) => {
         if (!loginState) {
@@ -127,6 +151,8 @@ const ListComponent = () => {
         }
     };
 
+
+
     return (
         <div className="post-container flex justify-center mt-24">
             <div className="post-wrapper w-full sm:w-1/2 md:w-1/2 lg:w-2/5">
@@ -141,24 +167,23 @@ const ListComponent = () => {
                                     <p className="font-bold">{board.writerNickname}</p>
                                 </div>
                             </div>
-                            <button className="text-gray-500" onClick={() => handleModalOpen(board.bno)}>
+                            <button className="text-gray-500" onClick={() => handleBoardInfoModalOpen(board.bno)}>
                                 ...
                             </button>
                         </div>
 
-                        <div className="post-body">
-                            {/* 이미지 렌더링 */}
+                        <div className="post-body"
+                        onClick={() => handleBoardModalOpen(board.bno)}>
                             <img
                                 className="w-full h-auto mb-3 cursor-pointer object-cover"
                                 style={{ height: '72vh', objectFit: 'cover' }}
                                 src={imageMap[board.bno] || "https://via.placeholder.com/800x600"}
                                 alt="Post Media"
-                                onClick={() => handleModalOpen(board.bno)}
                             />
-                            <p className="px-4 cursor-pointer font-bold" onClick={() => handleModalOpen(board.bno)}>
+                            <p className="px-4 cursor-pointer font-bold">
                                 {board.title}
                             </p>
-                            <p className="px-4 cursor-pointer" onClick={() => handleModalOpen(board.bno)}>
+                            <p className="px-4 cursor-pointer">
                                 {board.content}
                             </p>
                         </div>
@@ -168,7 +193,7 @@ const ListComponent = () => {
                                 <button className="mr-3 cursor-pointer" onClick={() => handleLikeToggle(board.bno)}>
                                     {likedBoards[board.bno] ? "❤️" : "🤍"} {board.heartCount}
                                 </button>
-                                <button className="cursor-pointer" onClick={() => handleModalOpen(board.bno)}>
+                                <button className="cursor-pointer" onClick={() => handleBoardModalOpen(board.bno)}>
                                     💬 {board.replyCount}
                                 </button>
                             </div>
@@ -176,11 +201,26 @@ const ListComponent = () => {
                     </div>
                 ))}
 
-                <BoardModal
-                    isOpen={isModalOpen !== null}
-                    onClose={() => setIsModalOpen(null)}
-                    bno={isModalOpen}
+                <BoardInfoModal
+                    isOpen={isBoardInfoModalOpen !== null}
+                    onClose={() => setIsBoardInfoModalOpen(null)}
+                    bno={isBoardInfoModalOpen}
+                    onModify={handleModifyBoard}
+                    onDelete={handleDeleteBoard}
                 />
+
+                <BoardModal
+                    isOpen={isBoardModalOpen !== null}
+                    onClose={() => setIsBoardModalOpen(null)}
+                    bno={isBoardModalOpen}
+                />
+
+                <ModifyModal
+                    isOpen={isModifyModalOpen !== null}
+                    onClose={() => closeModifyModal()}
+                    bno={isModifyModalOpen}
+                />
+
             </div>
         </div>
     );
