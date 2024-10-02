@@ -125,16 +125,15 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
         if (!isLogin) {
             alert("로그인 후 사용하실 수 있습니다.");
         } else if (newComment.trim() !== "") {
-
-            console.log(bno, loginState.mno, newComment)
+            console.log(bno, loginState.mno, newComment);
             postReply({
                 bno: bno,
                 replierId: loginState.mno,
                 content: newComment,
             });
-            setNewComment("");
+            setNewComment(""); // 댓글 입력 후 초기화
+            setRefresh(!refresh); // 댓글 추가 후 리프레시 상태 변경
         }
-        setRefresh(!refresh);
     };
 
     // 좋아요 토글 함수
@@ -163,7 +162,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white w-full max-w-7xl h-[75vh] rounded-lg shadow-lg flex relative">
+            <div className="bg-white w-4/5 h-5/6 rounded-lg shadow-lg flex relative overflow-hidden">
                 {/* 게시글 내용 (왼쪽) */}
                 <div className="w-5/6 p-6 flex flex-col">
                     <div className="flex items-center mb-4">
@@ -189,24 +188,22 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                             style={{ height: "70vh" }}
                         />
                     ) : (
-                        <p className="mb-4 text-center text-gray-500">
-                            이미지 로딩 중...
-                        </p>
+                        <p className="mb-4 text-center text-gray-500">이미지 로딩 중...</p>
                     )}
                     {boardData && !fetching ? (
                         <>
+                            <button
+                                className="pl-2 cursor-pointer self-start"
+                                onClick={() => handleLikeToggle(bno)}
+                            >
+                                {liked ? "❤️" : "🤍"} {boardData.heartCount}
+                            </button>
                             <h1 className="text-2xl font-bold mt-2 mb-2 pl-2 text-gray-800">
                                 {boardData.title}
                             </h1>
                             <p className="text-gray-700 pl-2 mb-4 text-lg leading-relaxed">
                                 {boardData.content}
                             </p>
-                            <button
-                                className="mr-3 cursor-pointer"
-                                onClick={() => handleLikeToggle(bno)}
-                            >
-                                {liked ? "❤️" : "🤍"} {boardData.heartCount}
-                            </button>
                         </>
                     ) : (
                         !fetching && <p>게시글을 불러오는 중입니다...</p>
@@ -214,51 +211,76 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 </div>
 
                 {/* 댓글 창 (오른쪽) */}
-                <div className="w-1/3 border-l p-6 flex flex-col">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                        댓글
-                    </h3>
-                    {fetching ? (
-                        <p className="text-gray-500">댓글 로딩 중...</p>
-                    ) : boardReply && boardReply.length > 0 ? (
-                        <ul className="space-y-4">
-                            {boardReply.map((reply) => (
-                                <li key={reply.rno}>
-                                    <div className="text-sm font-medium text-gray-700">
-                                        {reply.replierNickname}
-                                    </div>
-                                    <p className="text-gray-600 text-sm">{reply.content}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-gray-500">댓글이 없습니다.</p>
-                    )}
+                <div className="w-1/3 p-5 flex flex-col">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">댓글</h3>
 
-                    {/* 댓글 추가 UI */}
-                    <div className="mt-auto">
+                    {/* 댓글 목록 영역 - 고정된 높이와 스크롤 가능 설정 */}
+                    <div className="flex-grow overflow-y-auto max-h mb-4">
+                        {fetching ? (
+                            <p className="text-gray-500">댓글 로딩 중...</p>
+                        ) : boardReply && boardReply.length > 0 ? (
+                            <ul className="space-y-3">
+                                {boardReply.map((reply) => (
+                                    <li key={reply.rno} className="p-2 bg-gray-100 rounded-lg">
+                                        <div className="font-medium text-gray-700">
+                                            {reply.replierNickname}
+                                        </div>
+                                        <p className="text-gray-600 text-sm">{reply.content}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-gray-500">댓글이 없습니다.</p>
+                        )}
+                    </div>
+
+                    <div className="flex items-center">
                         <textarea
-                            className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:border-blue-400"
-                            rows="3"
+                            className="flex-grow p-3 border border-gray-300 rounded-md resize-none focus:border-black"
                             placeholder="댓글을 입력하세요..."
                             value={newComment}
-                            onChange={(e) => setNewComment(e.target.value)}
+                            onChange={(e) => {
+                                // 최대 100자로 제한
+                                if (e.target.value.length <= 100) {
+                                    setNewComment(e.target.value);
+                                }else {
+                                    alert("댓글은 100자까지 입력이 가능합니다!")
+                                }
+                            }}
+                            rows={2} // 초기 행 수
+                            onInput={(e) => {
+                                // 자동으로 높이를 조절
+                                e.target.style.height = "auto";
+                                e.target.style.height = `${e.target.scrollHeight}px`;
+                            }}
                         />
                         <button
-                            className="bg-blue-500 text-white w-full py-2 rounded-md font-semibold transition duration-300 hover:bg-blue-600"
+                            className="ml-2 p-2"
                             onClick={handleAddComment}
                         >
-                            댓글 달기
+                            입력
                         </button>
                     </div>
                 </div>
 
-                {/* 닫기 버튼 */}
                 <button
                     className="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
                     onClick={confirmClose}
                 >
-                    닫기
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
                 </button>
             </div>
         </div>
