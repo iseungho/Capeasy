@@ -1,30 +1,30 @@
 import React from "react";
 import useCustomMove from "../../hooks/useCustomMove";
 
-const MemberInfoModal = ({ isOpen, onClose, profileImage, onLogout }) => {
-  
-  const {moveToMyPage} = useCustomMove();
-  if (!isOpen) return null; 
+const MemberInfoModal = ({ isOpen, onClose, profileImage, onLogout, position }) => {
+  const { moveToMyPage } = useCustomMove();
+  if (!isOpen) return null;
 
   const handleMyPageClick = () => {
-    moveToMyPage()
-    onClose(); 
+    moveToMyPage();
+    onClose();
   };
 
   const handleLogoutClick = () => {
-    onLogout(); 
-    onClose(); 
+    onLogout();
+    onClose();
   };
 
   return (
-    <div className="absolute top-16 right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
+    <div
+      className="absolute bg-white rounded-lg shadow-lg z-50 member-info-modal"
+      style={{ top: `${position.top}px`, left: `${position.left}px`, width: "200px" }}
+    >
       <div className="p-4 flex flex-col items-center">
-        <img
-          src={profileImage || 'https://via.placeholder.com/150'}
-          alt="Profile"
-          className="w-16 h-16 rounded-full mb-2"
+        <div
+          className="bg-profile-image bg-cover w-32 h-32 rounded-full mb-3 object-cover"
         />
-        <div className="flex flex-col space-y-2 w-full">
+        <div className="mt-4 flex flex-col space-y-3 w-full">
           <button
             className="bg-blue-500 text-white w-full py-2 rounded-lg hover:bg-blue-600 transition"
             onClick={handleMyPageClick}
@@ -36,6 +36,12 @@ const MemberInfoModal = ({ isOpen, onClose, profileImage, onLogout }) => {
             onClick={handleLogoutClick}
           >
             로그아웃
+          </button>
+          <button
+            className="bg-gray-300 text-black w-full py-2 rounded-lg hover:bg-gray-400 transition"
+            onClick={onClose}
+          >
+            닫기
           </button>
         </div>
       </div>
