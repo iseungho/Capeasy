@@ -31,10 +31,10 @@ const BasicMenu = ({ children }) => {
             <nav id="navbar" className="fixed w-full top-0 left-0 z-50 bg-white shadow">
                 <div className="container mx-auto px-4 py-2 flex justify-between items-center">
                     <div className="flex items-center space-x-4">
-                        <button
+                        <div
                             className="bg-logo-image bg-cover w-48 h-16 font-bold text-blue-500"
                             onClick={moveToMain}
-                        ></button>
+                        ></div>
                         <button
                             className="text-gray-400 font-black text-lg"
                             onClick={moveToBoardList}
