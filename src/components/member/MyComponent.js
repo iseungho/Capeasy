@@ -23,7 +23,7 @@ const myBoardListInitState = {
 
 const MyComponent = () => {
     const { page, size, refresh, moveToMyPage } = useCustomMove();
-    const {moveToModify} = useCustomLogin();
+    const { moveToModify } = useCustomLogin();
     const [myBoardList, setMyBoardList] = useState(myBoardListInitState);
     const [fetching, setFetching] = useState(false);
     const { isLogin, loginState } = useCustomLogin();
@@ -61,7 +61,7 @@ const MyComponent = () => {
             try {
                 const data = await getBoardListByMno({ page, size }, loginState.mno);
                 setMyBoardList(data); // 데이터를 먼저 업데이트
-    
+
                 // 각 게시글의 이미지 불러오기
                 const newImageMap = {};
                 for (const myBoard of data.dtoList) {  // 데이터를 직접 사용
@@ -77,7 +77,6 @@ const MyComponent = () => {
         };
         fetchData();
     }, [page, size, refresh, loginState.mno, loadThumbnail]); // 종속성 배열에서 myBoardList.dtoList 제거
-    
 
     const moveMain = useCallback(() => {
         navigate('/');
@@ -105,61 +104,62 @@ const MyComponent = () => {
     }
 
     return (
-        <div className="p-5 max-w-7xl mx-auto h-screen overflow-y-auto mt-32">
-        {/* Upper User Info */}
-        <div className="flex items-center mb-8 border-b pb-4 border-gray-300 justify-between">
-            <div className="flex items-center">
-                <button
-                    className="bg-profile-image bg-cover w-24 h-24 rounded-full mr-5"
-                />
-                <div>
-                    <h2 className="text-2xl font-semibold">{loginState.nickname}</h2>
-                    <p className="text-gray-600">{loginState.email}</p>
-                </div>
-            </div>
-            <button 
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                onClick={moveToModify}>
-                회원정보 수정
-            </button>
-        </div>
-    
-        {/* Board List */}
-        <div>
-            <h3 className="text-xl font-medium mb-4">내 게시글</h3>
-            {fetching ? (
-                <p>Loading...</p>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {myBoardList.dtoList.map(board => (
-                        <div
-                            key={board.bno}
-                            className="border rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow"
-                            onClick={() => openBoardModal(board.bno)}
-                        >
-                            <img
-                                className="w-full h-44 object-cover"
-                                src={imageMap[board.bno]}
-                                alt="Board Thumbnail"
-                            />
-                            <p className="p-4 text-center text-gray-800 font-medium">{board.title}</p>
+        <div className="h-screen w-screen overflow-auto"> {/* 전체 화면에 스크롤이 생기도록 수정 */}
+            <div className="p-5 max-w-7xl mx-auto mt-32"> {/* 내부 콘텐츠에서 스크롤을 허용 */}
+                {/* Upper User Info */}
+                <div className="flex items-center mb-8 border-b pb-4 border-gray-300 justify-between">
+                    <div className="flex items-center">
+                        <button
+                            className="bg-profile-image bg-cover w-24 h-24 rounded-full mr-5"
+                        />
+                        <div>
+                            <h2 className="text-2xl font-semibold">{loginState.nickname}</h2>
+                            <p className="text-gray-600">{loginState.email}</p>
                         </div>
-                    ))}
+                    </div>
+                    <button
+                        className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-blue-600 transition-colors"
+                        onClick={moveToModify}>
+                        회원정보 수정
+                    </button>
                 </div>
-            )}
+
+                {/* Board List */}
+                <div>
+                    <h3 className="text-xl font-medium mb-4">내 게시글</h3>
+                    {fetching ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {myBoardList.dtoList.map(board => (
+                                <div
+                                    key={board.bno}
+                                    className="border rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow"
+                                    onClick={() => openBoardModal(board.bno)}
+                                >
+                                    <img
+                                        className="w-full h-44 object-cover"
+                                        src={imageMap[board.bno]}
+                                        alt="Board Thumbnail"
+                                    />
+                                    <p className="p-4 text-center text-gray-800 font-medium">{board.title}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <PageComponent serverData={myBoardList} movePage={moveToMyPage} />
+
+                <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+
+                <BoardModal
+                    isOpen={isBoardModalOpen !== null}
+                    onClose={() => setIsBoardModalOpen(null)}
+                    bno={isBoardModalOpen}
+                />
+            </div>
         </div>
-    
-        <PageComponent serverData={myBoardList} movePage={moveToMyPage} />
-    
-        <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
-    
-        <BoardModal
-            isOpen={isBoardModalOpen !== null}
-            onClose={() => setIsBoardModalOpen(null)}
-            bno={isBoardModalOpen}
-        />
-    </div>
-    
     );
 };
 
