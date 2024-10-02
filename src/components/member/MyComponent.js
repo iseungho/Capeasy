@@ -2,14 +2,14 @@ import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import LoginModal from "../member/LoginModal";
-
+import PageComponent from "../common/PageComponent";
 import { getBoardListByMno } from "../../api/boardApi";
 import { getThumbnail } from "../../api/imageApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import BoardModal from "../board/BoardModal";
 
 const myBoardListInitState = {
-    boardList: [],
+    dtoList: [],
     pageNumList: [],
     pageRequestDTO: null,
     prev: false,
@@ -22,7 +22,8 @@ const myBoardListInitState = {
 };
 
 const MyComponent = () => {
-    const { page, size, refresh } = useCustomMove();
+    const { page, size, refresh, moveToMyPage } = useCustomMove();
+    const {moveToModify} = useCustomLogin();
     const [myBoardList, setMyBoardList] = useState(myBoardListInitState);
     const [fetching, setFetching] = useState(false);
     const { isLogin, loginState } = useCustomLogin();
@@ -58,20 +59,16 @@ const MyComponent = () => {
             if (!loginState.mno) return;
             setFetching(true);
             try {
-                const responseData = await getBoardListByMno({ page, size }, loginState.mno);
-                setMyBoardList({
-                    ...myBoardListInitState,
-                    boardList: responseData.dtoList || []
-                });
-
+                const data = await getBoardListByMno({ page, size }, loginState.mno);
+                setMyBoardList(data); // 데이터를 먼저 업데이트
+    
                 // 각 게시글의 이미지 불러오기
                 const newImageMap = {};
-                for (const myBoard of responseData.dtoList) { // myBoardList에서 responseData.dtoList로 수정
+                for (const myBoard of data.dtoList) {  // 데이터를 직접 사용
                     const image = await loadThumbnail(myBoard.ino);
                     newImageMap[myBoard.bno] = image;
                 }
                 setImageMap(newImageMap);
-
             } catch (error) {
                 console.error("Error fetching board data:", error);
             } finally {
@@ -79,7 +76,8 @@ const MyComponent = () => {
             }
         };
         fetchData();
-    }, [page, size, refresh, loginState.mno, loadThumbnail]); // loadThumbnail 추가
+    }, [page, size, refresh, loginState.mno, loadThumbnail]); // 종속성 배열에서 myBoardList.dtoList 제거
+    
 
     const moveMain = useCallback(() => {
         navigate('/');
@@ -119,6 +117,13 @@ const MyComponent = () => {
                     <h2 className="text-2xl font-semibold">{loginState.nickname}</h2>
                     <p className="text-gray-600">{loginState.email}</p>
                 </div>
+                <div>
+                    <button 
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={moveToModify}>
+                            회원정보 수정
+                    </button>
+                </div>
             </div>
 
             {/* 자신이 작성한 게시글 목록 */}
@@ -128,7 +133,7 @@ const MyComponent = () => {
                     <p>Loading...</p>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {myBoardList.boardList.map(board => (
+                        {myBoardList.dtoList.map(board => (
                             <div
                                 key={board.bno}
                                 className="border rounded-lg overflow-hidden bg-white shadow hover:shadow-lg transition-shadow"
@@ -145,6 +150,10 @@ const MyComponent = () => {
 
                     </div>
                 )}
+            </div>
+
+            <div>
+                <PageComponent serverData={myBoardList} movePage={moveToMyPage}/>
             </div>
 
             {/* LoginModal */}

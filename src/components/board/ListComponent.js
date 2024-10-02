@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
 import BoardModal from "./BoardModal";
 import BoardInfoModal from "../common/BoardInfoModal";
-import ModifyModal from "../common/ModifyModal"; // 수정 모달 임포트
-import { getBoardList, deleteBoard } from "../../api/boardApi"; // deleteBoard 임포트
+import ModifyModal from "../common/ModifyModal";
+import { getBoardList, deleteBoard } from "../../api/boardApi";
 import { getThumbnail } from "../../api/imageApi";
 import { getHeartListByBno, postHearts, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
+import PageComponent from "../common/PageComponent";
 
 const initListState = {
-    boardList: [],
+    dtoList: [],
     pageNumList: [],
     pageRequestDTO: null,
     prev: false,
@@ -22,7 +23,7 @@ const initListState = {
 };
 
 const ListComponent = () => {
-    const { page, size, refresh, setRefresh } = useCustomMove();
+    const { page, size, refresh, moveToBoardList, setRefresh } = useCustomMove();
     const [serverData, setServerData] = useState(initListState);
     const [fetching, setFetching] = useState(false);
     const [isBoardModalOpen, setIsBoardModalOpen] = useState(null);
@@ -59,24 +60,19 @@ const ListComponent = () => {
         const fetchBoardAndLikes = async () => {
             setFetching(true);
             try {
-                const responseData = await getBoardList({ page, size });
-                const boardList = responseData.dtoList || [];
-
-                setServerData({
-                    ...initListState,
-                    boardList
-                });
-
+                const data = await getBoardList({ page, size });
+                setServerData(data);
+    
                 const newImageMap = {};
-                for (const board of boardList) {
+                for (const board of data.dtoList) {
                     const image = await loadThumbnail(board.ino);
                     newImageMap[board.bno] = image;
                 }
                 setImageMap(newImageMap);
-
-                if (loginState?.mno && boardList.length > 0) {
+    
+                if (loginState?.mno && data.dtoList.length > 0) {
                     const likesState = {};
-                    for (const board of boardList) {
+                    for (const board of data.dtoList) {
                         const likedUsers = await getHeartListByBno(board.bno);
                         likesState[board.bno] = likedUsers.some(
                             like => like.memberId === loginState.mno
@@ -90,9 +86,10 @@ const ListComponent = () => {
                 setFetching(false);
             }
         };
-
+    
         fetchBoardAndLikes();
-    }, [loginState, page, size, refresh, loadThumbnail]);
+    }, [loginState, page, size, refresh, loadThumbnail]);  // Removed serverData.dtoList dependency
+    
 
     const handleBoardModalOpen = (bno) => {
         setIsBoardModalOpen(isBoardModalOpen === bno ? null : bno);
@@ -151,14 +148,12 @@ const ListComponent = () => {
         }
     };
 
-
-
     return (
         <div className="post-container flex justify-center mt-24">
             <div className="post-wrapper w-full sm:w-1/2 md:w-1/2 lg:w-2/5">
                 {fetching && <p>Loading...</p>}
 
-                {serverData.boardList.map((board) => (
+                {serverData.dtoList.map((board) => (
                     <div key={board.bno} className="post-item border-b border-gray-300 py-4 mb-6 bg-white shadow-lg rounded-lg">
                         <div className="post-header flex justify-between items-center mb-3 px-4">
                             <div className="flex items-center">
@@ -200,6 +195,10 @@ const ListComponent = () => {
                         </div>
                     </div>
                 ))}
+                
+                <div>
+                    <PageComponent serverData={serverData} movePage={moveToBoardList}/>
+                </div>
 
                 <BoardInfoModal
                     isOpen={isBoardInfoModalOpen !== null}

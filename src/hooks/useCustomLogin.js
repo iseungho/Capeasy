@@ -32,6 +32,10 @@ const useCustomLogin = () => {
         return <Navigate replace to="/member/login" />
     }
 
+    const moveToModify = () => {
+        navigate({ pathname: '/member/modify' }, { replace: true })
+    }
+
     const exceptionHandle = (ex) => {
         console.log("Exception------------------------")
         console.log(ex)
@@ -50,7 +54,7 @@ const useCustomLogin = () => {
     }
 
     return {
-        loginState, isLogin, doLogin, doLogout, moveToPath, moveToLogin, moveToLoginReturn, exceptionHandle
+        loginState, isLogin, doLogin, doLogout, moveToPath, moveToLogin, moveToLoginReturn, moveToModify, exceptionHandle
     }
 }
 
