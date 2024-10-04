@@ -3,7 +3,7 @@ import BoardModal from "./BoardModal";
 import BoardInfoModal from "../common/BoardInfoModal";
 import ModifyModal from "../common/ModifyModal";
 import { getBoardList, deleteBoard } from "../../api/boardApi";
-import { getThumbnail } from "../../api/imageApi";
+import { getImage } from "../../api/imageApi";
 import { getHeartListByBno, postHearts, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
@@ -36,7 +36,7 @@ const ListComponent = () => {
 
     const loadThumbnail = useCallback(async (ino) => {
         try {
-            const image = await getThumbnail(ino);
+            const image = await getImage(ino);
             const base64Data = image.fileContent;
             return createBase64DataToBlob(base64Data);
         } catch (error) {
@@ -157,7 +157,7 @@ const ListComponent = () => {
                     <div key={board.bno} className="post-item border-b border-gray-300 py-4 m-6 bg-white shadow-md hover:shadow-lg transition-shadow rounded-lg">
                         <div className="post-header flex justify-between items-center mb-3 px-4">
                             <div className="flex items-center">
-                                <img className="w-10 h-10 rounded-full mr-3" src="https://via.placeholder.com/40" alt="User Avatar" />
+                                <div className="w-10 h-10 rounded-full mr-3 bg-profile-image bg-cover"/>
                                 <div>
                                     <p className="accent-gray-800">{board.writerNickname}</p>
                                 </div>

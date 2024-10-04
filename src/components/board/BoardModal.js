@@ -63,8 +63,8 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 console.error("좋아요 데이터를 가져오는 중 오류 발생:", error);
             }
         };
-        
-        
+
+
 
         if (isOpen && boardData) {
             fetchReplyData();
@@ -89,7 +89,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
             loadImage();
         }
     }, [boardData]);
-    
+
 
     // Base64 데이터를 Blob으로 변환하는 함수
     const createBase64DataToBlob = (base64Data) => {
@@ -166,11 +166,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 {/* 게시글 내용 (왼쪽) */}
                 <div className="w-5/6 p-6 flex flex-col">
                     <div className="flex items-center mb-4">
-                        <img
-                            className="w-12 h-12 rounded-full mr-4"
-                            src="https://via.placeholder.com/40"
-                            alt="User Avatar"
-                        />
+                        <div className="w-12 h-12 rounded-full mr-4 bg-profile-image bg-cover" />
                         <h2 className="text-lg font-semibold text-gray-600">
                             {boardData ? boardData.writerNickname : "로딩 중..."}
                         </h2>
@@ -190,25 +186,30 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                     ) : (
                         <p className="mb-4 text-center text-gray-500">이미지 로딩 중...</p>
                     )}
+
                     {boardData && !fetching ? (
-                        <>
-                            <button
-                                className="pl-2 cursor-pointer self-start"
-                                onClick={() => handleLikeToggle(bno)}
-                            >
-                                {liked ? "❤️" : "🤍"} {boardData.heartCount}
-                            </button>
+                        <div className="flex flex-col mt-auto">
                             <h1 className="text-2xl font-bold mt-2 mb-2 pl-2 text-gray-800">
                                 {boardData.title}
                             </h1>
                             <p className="text-gray-700 pl-2 mb-4 text-lg leading-relaxed">
                                 {boardData.content}
                             </p>
-                        </>
+                            <div className="flex justify-between items-end">
+                                <div className="pl-2"></div>
+                                <button
+                                    className="pr-4 cursor-pointer self-end"
+                                    onClick={() => handleLikeToggle(bno)}
+                                >
+                                    {liked ? "❤️" : "🤍"} {boardData.heartCount}
+                                </button>
+                            </div>
+                        </div>
                     ) : (
                         !fetching && <p>게시글을 불러오는 중입니다...</p>
                     )}
                 </div>
+
 
                 {/* 댓글 창 (오른쪽) */}
                 <div className="w-1/3 p-5 flex flex-col">
@@ -243,7 +244,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                                 // 최대 100자로 제한
                                 if (e.target.value.length <= 100) {
                                     setNewComment(e.target.value);
-                                }else {
+                                } else {
                                     alert("댓글은 100자까지 입력이 가능합니다!")
                                 }
                             }}

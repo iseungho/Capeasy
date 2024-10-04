@@ -4,7 +4,7 @@ import useCustomLogin from "../../hooks/useCustomLogin";
 import LoginModal from "../member/LoginModal";
 import PageComponent from "../common/PageComponent";
 import { getBoardListByMno } from "../../api/boardApi";
-import { getThumbnail } from "../../api/imageApi";
+import { getImage } from "../../api/imageApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import BoardModal from "../board/BoardModal";
 
@@ -34,7 +34,7 @@ const MyComponent = () => {
 
     const loadThumbnail = useCallback(async (ino) => {
         try {
-            const image = await getThumbnail(ino);
+            const image = await getImage(ino);
             const base64Data = image.fileContent;
             return createBase64DataToBlob(base64Data); // Blob URL 반환
         } catch (error) {
