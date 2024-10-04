@@ -72,7 +72,7 @@ const BasicMenu = ({ children }) => {
               className="bg-logo-image bg-cover w-48 h-16 font-bold text-blue-500"
               onClick={moveToMain}
             ></div>
-            <button className="text-gray-400 font-black text-lg" onClick={moveToBoardList}>
+            <button className="text-gray-500 font-semibold text-xl" onClick={moveToBoardList}>
               Community
             </button>
           </div>

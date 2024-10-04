@@ -89,13 +89,13 @@ const ResultComponent = ({ ino }) => {
             <div className="flex justify-center m-10">
                 <button
                     onClick={handleDownloadClick}
-                    className="bg-green-500 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-600 transition-shadow shadow-md hover:shadow-lg"
+                    className="bg-gray-500 text-white px-6 py-4 rounded-lg hover:bg-gray-600 transition mx-2"
                 >
                     ⬇️ 원본 다운로드
                 </button>
                 <button
-                    onClick={openWriteModal} 
-                    className="bg-green-500 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-600 transition-shadow shadow-md hover:shadow-lg"
+                    onClick={openWriteModal}
+                    className="bg-green-500 text-white px-6 py-4 rounded-lg hover:bg-green-600 transition mx-2"
                 >
                     🖋️ 게시글 작성
                 </button>

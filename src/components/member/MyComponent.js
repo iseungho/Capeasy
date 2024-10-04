@@ -130,7 +130,7 @@ const MyComponent = () => {
                     {fetching ? (
                         <p>Loading...</p>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             {myBoardList.dtoList.map(board => (
                                 <div
                                     key={board.bno}
@@ -138,7 +138,8 @@ const MyComponent = () => {
                                     onClick={() => openBoardModal(board.bno)}
                                 >
                                     <img
-                                        className="w-full h-44 object-cover"
+                                        className="w-full h-auto mb-3 cursor-pointer object-cover"
+                                        style={{aspectRatio: '1 / 1', objectFit: 'cover'}}
                                         src={imageMap[board.bno]}
                                         alt="Board Thumbnail"
                                     />
@@ -149,9 +150,9 @@ const MyComponent = () => {
                     )}
                 </div>
 
-                <PageComponent serverData={myBoardList} movePage={moveToMyPage} />
+                <PageComponent serverData={myBoardList} movePage={moveToMyPage}/>
 
-                <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+                <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal}/>
 
                 <BoardModal
                     isOpen={isBoardModalOpen !== null}

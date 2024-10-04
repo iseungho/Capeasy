@@ -18,6 +18,10 @@ const WriteModal = ({ isOpen, onClose, ino }) => {
       alert("제목과 내용을 입력해주세요.");
       return;
     }
+    else{
+      alert("작성이 완료되었습니다! 마이페이지에서 확인해주세요.");
+
+    }
 
     // 작성된 데이터를 업데이트
     const newBoardData = {
@@ -51,64 +55,88 @@ const WriteModal = ({ isOpen, onClose, ino }) => {
     }
   };
 
-  return (
-    <>
-      {isBoardModalOpen && (
-        <BoardModal
-          isOpen={isBoardModalOpen}
-          onClose={() => setIsBoardModalOpen(false)}
-          bno={newBoardNo} // 새로 작성된 게시글 번호 전달
-        />
-      )}
+  const confirmClose = () => {
+    if (window.confirm("진행상황이 저장되지 않습니다. 정말로 닫으시겠습니까?")) {
+      setTitle(""); // 제목 초기화
+      setContent(""); // 내용 초기화
+      onClose();
+    }
+  };
 
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-          <h2 className="text-2xl font-semibold mb-4">글 작성</h2>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
-              제목
-            </label>
-            <input
-              id="title"
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
+  return (
+      <>
+        {isBoardModalOpen && (
+            <BoardModal
+                isOpen={isBoardModalOpen}
+                onClose={() => setIsBoardModalOpen(false)}
+                bno={newBoardNo} // 새로 작성된 게시글 번호 전달
             />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
-              내용
-            </label>
-            <textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              rows="5"
-              required
-            />
-          </div>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
-              onClick={onClose}
-            >
-              취소
+        )}
+
+        <div
+            className="fixed inset-0 left-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
+        >
+          <div
+              className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md relative"
+              onClick={(e) => e.stopPropagation()}
+          >
+            <button className="absolute top-4 right-4" onClick={confirmClose}>
+              <span className="text-3xl font-bold text-gray-400 hover:text-gray-600">&times;</span>
             </button>
-            <button
-              type="button"
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-              onClick={handleSubmit}
-            >
-              작성
-            </button>
+
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold text-black">글 작성</h2>
+            </div>
+
+            {/* 제목 입력 폼 */}
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2" htmlFor="title">
+                제목
+              </label>
+              <input
+                  id="title"
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="제목을 입력하세요."
+              />
+            </div>
+
+            {/* 내용 입력 폼 */}
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-2" htmlFor="content">
+                내용
+              </label>
+              <textarea
+                  id="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none  resize-none focus:ring-2 focus:ring-black"
+                  rows="8 "
+                  placeholder="내용을 입력하세요."
+              />
+            </div>
+            {/* 버튼들 */}
+            <div className="flex justify-end">
+              <button
+                  type="button"
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition mr-2"
+                  onClick={confirmClose}
+              >
+                취소
+              </button>
+              <button
+                  type="button"
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+                  onClick={handleSubmit}
+              >
+                작성
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </>
+      </>
   );
 };
 

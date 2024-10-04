@@ -154,12 +154,12 @@ const ListComponent = () => {
                 {fetching && <p>Loading...</p>}
 
                 {serverData.dtoList.map((board) => (
-                    <div key={board.bno} className="post-item border-b border-gray-300 py-4 mb-6 bg-white shadow-lg rounded-lg">
+                    <div key={board.bno} className="post-item border-b border-gray-300 py-4 m-6 bg-white shadow-md hover:shadow-lg transition-shadow rounded-lg">
                         <div className="post-header flex justify-between items-center mb-3 px-4">
                             <div className="flex items-center">
                                 <img className="w-10 h-10 rounded-full mr-3" src="https://via.placeholder.com/40" alt="User Avatar" />
                                 <div>
-                                    <p className="font-bold">{board.writerNickname}</p>
+                                    <p className="accent-gray-800">{board.writerNickname}</p>
                                 </div>
                             </div>
                             <button className="text-gray-500" onClick={() => handleBoardInfoModalOpen(board.bno)}>
@@ -168,17 +168,17 @@ const ListComponent = () => {
                         </div>
 
                         <div className="post-body"
-                        onClick={() => handleBoardModalOpen(board.bno)}>
+                             onClick={() => handleBoardModalOpen(board.bno)}>
                             <img
                                 className="w-full h-auto mb-3 cursor-pointer object-cover"
-                                style={{ height: '72vh', objectFit: 'cover' }}
+                                style={{aspectRatio: '1 / 1', objectFit: 'cover'}}
                                 src={imageMap[board.bno] || "https://via.placeholder.com/800x600"}
                                 alt="Post Media"
                             />
-                            <p className="px-4 cursor-pointer font-bold">
+                            <p className="px-4 cursor-pointer font-semibold text-xl md:text-xl">
                                 {board.title}
                             </p>
-                            <p className="px-4 cursor-pointer">
+                            <p className="px-4 cursor-pointer text-sm md:text-base">
                                 {board.content}
                             </p>
                         </div>
@@ -195,7 +195,7 @@ const ListComponent = () => {
                         </div>
                     </div>
                 ))}
-                
+
                 <div>
                     <PageComponent serverData={serverData} movePage={moveToBoardList}/>
                 </div>
