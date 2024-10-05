@@ -157,7 +157,7 @@ const ListComponent = () => {
                     <div key={board.bno} className="post-item border-b border-gray-300 py-4 m-6 bg-white shadow-md hover:shadow-lg transition-shadow rounded-lg">
                         <div className="post-header flex justify-between items-center mb-3 px-4">
                             <div className="flex items-center">
-                                <img className="w-10 h-10 rounded-full mr-3" src="https://via.placeholder.com/40" alt="User Avatar" />
+                                <div className="bg-profile-image bg-cover w-10 h-10 rounded-full mr-3"/>
                                 <div>
                                     <p className="accent-gray-800">{board.writerNickname}</p>
                                 </div>

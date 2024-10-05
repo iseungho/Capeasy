@@ -13,11 +13,6 @@ const BasicMenu = ({ children }) => {
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isMemberInfoOpen, setIsMemberInfoOpen] = useState(false);
-  const [memberInfoPosition, setMemberInfoPosition] = useState({
-    top: 0,
-    left: 0,
-  });
-
   const profileButtonRef = useRef(null); // Ref for the profile button
 
   const handleLogout = useCallback(() => {
@@ -30,15 +25,6 @@ const BasicMenu = ({ children }) => {
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
   const openMemberInfo = () => {
-    if (profileButtonRef.current) {
-      const rect = profileButtonRef.current.getBoundingClientRect();
-      const modalWidth = 200; // Set this to the actual width of your modal
-      const buttonCenterX = rect.left + rect.width / 2;
-      setMemberInfoPosition({
-        top: rect.bottom + window.scrollY, // Position below the button
-        left: buttonCenterX - modalWidth / 2 + window.scrollX, // Center the modal horizontally
-      });
-    }
     setIsMemberInfoOpen(true);
   };
 
@@ -100,7 +86,7 @@ const BasicMenu = ({ children }) => {
                     onClose={closeMemberInfo}
                     profileImage={loginState.profileImage}
                     onLogout={handleLogout}
-                    position={memberInfoPosition} // Pass position to the modal
+                    anchorEl={profileButtonRef.current} // Pass the anchor element to the modal
                   />
                 )}
               </>
