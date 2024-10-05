@@ -41,13 +41,13 @@ const MemberInfoModal = ({ isOpen, onClose, profileImage, onLogout, anchorEl }) 
       <hr />
       <div className="flex flex-col space-y-2 mt-4">
         <button
-          className="w-full rounded-lg text-black hover:bg-gray-100 transition-colors h-10"
+          className="w-full rounded-lg text-black hover:bg-gray-100 transition-colors h-10 font-bold"
           onClick={handleMyPageClick}
         >
           프로필
         </button>
         <button
-          className="w-full rounded-lg text-black hover:bg-gray-100 transition-colors h-10"
+          className="w-full rounded-lg text-black hover:bg-gray-100 transition-colors h-10 font-bold"
           onClick={handleLogoutClick}
         >
           로그아웃
