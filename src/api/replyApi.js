@@ -1,4 +1,5 @@
 import jwtAxios from "../util/jwtUtil";
+import axios from "axios";
 
 export const API_SERVER_HOST = 'http://localhost:8080';
 
@@ -17,19 +18,22 @@ export const postReply = async (replyData) => {
 };
 
 export const getReply = async (rno) => {
-    const res = await jwtAxios.get(`${prefix}/${rno}`);
+    const res = await axios.get(`${prefix}/${rno}`);
 
     return res.data
 }
 
 export const getReplyByBno = async (bno) => {
-    const res = await jwtAxios.get(`${prefix}/board/${bno}`);
+    const res = await axios.get(`${prefix}/board/${bno}`);
 
     return res.data
 }
 
-export const putReply = async (rno) => {
-    const res = await jwtAxios.put(`${prefix}/${rno}`);
+export const putReply = async (rno, content) => {
+    const formData = new FormData();
+
+    formData.append('content', content);
+    const res = await jwtAxios.put(`${prefix}/${rno}`, formData);
 
     return res.data
 }

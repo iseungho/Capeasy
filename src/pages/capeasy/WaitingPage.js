@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import BasicLayout from '../layouts/BasicLayout';
-import WaitingComponent from '../components/capeasy/WaitingComponent';
+import BasicLayout from '../../layouts/BasicLayout';
+import WaitingComponent from '../../components/capeasy/WaitingComponent';
 
 const WaitingPage = () => {
     

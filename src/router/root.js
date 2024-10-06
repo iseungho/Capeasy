@@ -6,15 +6,13 @@ const { createBrowserRouter } = require("react-router-dom");
 
 const Loading = <div className="loading-image"></div>
 
-const Main = lazy(() => import("../pages/MainPage"))
+const Main = lazy(() => import("../pages/capeasy/MainPage"))
 
-const Create = lazy(() => import("../pages/CreatePage"))
+const Create = lazy(() => import("../pages/capeasy/CreatePage"))
 
-const Waiting = lazy(() => import("../pages/WaitingPage"))
+const Waiting = lazy(() => import("../pages/capeasy/WaitingPage"))
 
-const Result = lazy(() => import("../pages/ResultPage"))
-
-const Test = lazy(() => import("../pages/TestPage"))
+const Result = lazy(() => import("../pages/capeasy/ResultPage"))
 
 const root = createBrowserRouter([
     {
@@ -40,10 +38,6 @@ const root = createBrowserRouter([
     {
         path: "result/:ino",
         element: <Suspense fallback={Loading}><Result/></Suspense>
-    },
-    {
-        path: "test",
-        element: <Suspense fallback={Loading}><Test/></Suspense>
     }
 ])
 

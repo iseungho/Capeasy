@@ -23,7 +23,7 @@ const initListState = {
 };
 
 const ListComponent = () => {
-    const { page, size, refresh, moveToBoardList, setRefresh } = useCustomMove();
+    const { page, size, refresh, moveToBoardList, moveToMyPage, setRefresh } = useCustomMove();
     const [serverData, setServerData] = useState(initListState);
     const [fetching, setFetching] = useState(false);
     const [isBoardModalOpen, setIsBoardModalOpen] = useState(null);
@@ -32,7 +32,7 @@ const ListComponent = () => {
     const [likedBoards, setLikedBoards] = useState({});
     const [imageMap, setImageMap] = useState({});
 
-    const { loginState } = useCustomLogin();
+    const { isLogin, loginState } = useCustomLogin();
 
     const loadThumbnail = useCallback(async (ino) => {
         try {
@@ -119,7 +119,7 @@ const ListComponent = () => {
     }
 
     const handleLikeToggle = async (bno) => {
-        if (!loginState) {
+        if (!isLogin) {
             alert("로그인 후 좋아요를 누를 수 있습니다.");
             return;
         }
@@ -148,6 +148,10 @@ const ListComponent = () => {
         }
     };
 
+    const handleMoveMypage = async (mno) => {
+        moveToMyPage(mno);
+    };
+
     return (
         <div className="post-container flex justify-center mt-24">
             <div className="post-wrapper w-full sm:w-1/2 md:w-1/2 lg:w-2/5">
@@ -156,15 +160,17 @@ const ListComponent = () => {
                 {serverData.dtoList.map((board) => (
                     <div key={board.bno} className="post-item border-b border-gray-300 py-4 m-6 bg-white shadow-md hover:shadow-lg transition-shadow rounded-lg">
                         <div className="post-header flex justify-between items-center mb-3 px-4">
-                            <div className="flex items-center">
-                                <img className="w-10 h-10 rounded-full mr-3" src="https://via.placeholder.com/40" alt="User Avatar" />
+                            <div className="flex items-center" onClick={()=> handleMoveMypage(board.writerId)}>
+                                <div className="bg-profile-image bg-cover w-10 h-10 rounded-full mr-3"/>
                                 <div>
                                     <p className="accent-gray-800">{board.writerNickname}</p>
                                 </div>
                             </div>
-                            <button className="text-gray-500" onClick={() => handleBoardInfoModalOpen(board.bno)}>
+                            {board.writerId === loginState.mno && (
+                                <button className="text-gray-500" onClick={() => handleBoardInfoModalOpen(board.bno)}>
                                 ...
                             </button>
+                            )}
                         </div>
 
                         <div className="post-body"

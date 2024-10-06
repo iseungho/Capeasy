@@ -69,7 +69,7 @@ const useCustomMove = () => {
         })
     }
 
-    const moveToMyPage = (pageParam) => {
+    const moveToMyPage = (mno, pageParam) => {
         let queryStr = ""
 
         if(pageParam) {
@@ -84,7 +84,7 @@ const useCustomMove = () => {
         setRefresh(!refresh)
         
         navigate({
-            pathname: `/member/mypage`, search:queryStr
+            pathname: `/member/mypage/${mno}`, search:queryStr
         })
     }
 

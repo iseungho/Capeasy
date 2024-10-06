@@ -1,4 +1,5 @@
 import jwtAxios from "../util/jwtUtil";
+import axios from "axios";
 
 export const API_SERVER_HOST = 'http://localhost:8080';
 
@@ -28,7 +29,7 @@ export const postBoard = async (boardData) => {
 };
 
 export const getBoard = async (bno) => {
-    const res = await jwtAxios.get(`${prefix}/${bno}`);
+    const res = await axios.get(`${prefix}/${bno}`);
 
     return res.data
 }
@@ -37,7 +38,7 @@ export const getBoardList = async (pageParam) => {
     const { page, size } = pageParam;
 
     try {
-        const res = await jwtAxios.get(`${prefix}/list`, { params: { page, size } });
+        const res = await axios.get(`${prefix}/list`, { params: { page, size } });
         return res.data;
     } catch (error) {
         console.error('Error fetching posts:', error);
@@ -49,7 +50,7 @@ export const getBoardListByMno = async (pageParam, mno) => {
     const { page, size } = pageParam;
 
     try {
-        const res = await jwtAxios.get(`${prefix}/list/member/${mno}`, { params: { page, size } });
+        const res = await axios.get(`${prefix}/list/member/${mno}`, { params: { page, size } });
         return res.data;
     } catch (error) {
         console.error('Error fetching posts:', error);
