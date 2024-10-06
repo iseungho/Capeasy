@@ -26,7 +26,7 @@ const memberRouter = () => {
             element: <Suspense fallback={Loading}><Signup /></Suspense>,
         },
         {
-            path: "mypage",
+            path: "mypage/:mno",
             element: <Suspense fallback={Loading}><Mypage /></Suspense>,
         },
     ]

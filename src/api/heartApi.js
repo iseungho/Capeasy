@@ -1,4 +1,5 @@
 import jwtAxios from "../util/jwtUtil";
+import axios from "axios";
 
 export const API_SERVER_HOST = 'http://localhost:8080'
 
@@ -21,7 +22,7 @@ export const postHearts = async (bno, memberId) => {
 
 
 export const getHeart = async (hno) => {
-    const res = await jwtAxios.get();
+    const res = await axios.get();
 
     return res.data;
 }
@@ -30,7 +31,7 @@ export const getHeartListByBno = async (bno) => {
     if(!bno) {
         throw new Error("Board number (bno) is required");
     }
-    const res = await jwtAxios.get(`${prefix}/board/${bno}`);
+    const res = await axios.get(`${prefix}/board/${bno}`);
     return res.data
 }
 

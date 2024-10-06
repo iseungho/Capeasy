@@ -1,4 +1,5 @@
 import jwtAxios from "../util/jwtUtil";
+import axios from "axios";
 
 export const API_SERVER_HOST = 'http://localhost:8080';
 
@@ -23,13 +24,13 @@ export const postImage = async (image, uno) => {
 };
 
 export const getImage = async (ino) => {
-    const res = await jwtAxios.get(`${prefix}/images/view/${ino}`);
+    const res = await axios.get(`${prefix}/images/view/${ino}`);
     return res.data;
 
 };
 
 export const getThumbnail = async (ino) => {
     console.log("getThumbnail success")
-    const res = await jwtAxios.get(`${prefix}/images/view/thumbnail/${ino}`);
+    const res = await axios.get(`${prefix}/images/view/thumbnail/${ino}`);
     return res.data;
 };

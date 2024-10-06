@@ -7,6 +7,7 @@ import { getBoardListByMno } from "../../api/boardApi";
 import { getThumbnail } from "../../api/imageApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import BoardModal from "../board/BoardModal";
+import { getMember } from "../../api/memberApi";
 
 const myBoardListInitState = {
     dtoList: [],
@@ -21,22 +22,22 @@ const myBoardListInitState = {
     current: 0
 };
 
-const MyComponent = () => {
+const MyComponent = ({mno}) => {
     const { page, size, refresh, moveToMyPage } = useCustomMove();
     const { moveToModify } = useCustomLogin();
     const [myBoardList, setMyBoardList] = useState(myBoardListInitState);
     const [fetching, setFetching] = useState(false);
-    const { isLogin, loginState } = useCustomLogin();
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isBoardModalOpen, setIsBoardModalOpen] = useState(null);
     const navigate = useNavigate();
-    const [imageMap, setImageMap] = useState({}); // 각 게시글 이미지 상태
+    const [imageMap, setImageMap] = useState({});
+    const [memberData, setMemberData] = useState(null);
 
     const loadThumbnail = useCallback(async (ino) => {
         try {
             const image = await getThumbnail(ino);
             const base64Data = image.fileContent;
-            return createBase64DataToBlob(base64Data); // Blob URL 반환
+            return createBase64DataToBlob(base64Data);
         } catch (error) {
             console.error('Error loading image:', error);
             return null;
@@ -51,38 +52,57 @@ const MyComponent = () => {
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        return URL.createObjectURL(blob); // Blob URL로 변환
+        return URL.createObjectURL(blob);
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (!loginState.mno) return;
-            setFetching(true);
+        const fetchMemberData = async () => {
+            if (!mno) return;
             try {
-                const data = await getBoardListByMno({ page, size }, loginState.mno);
-                setMyBoardList(data); // 데이터를 먼저 업데이트
-
-                // 각 게시글의 이미지 불러오기
-                const newImageMap = {};
-                for (const myBoard of data.dtoList) {  // 데이터를 직접 사용
-                    const image = await loadThumbnail(myBoard.ino);
-                    newImageMap[myBoard.bno] = image;
-                }
-                setImageMap(newImageMap);
+                setFetching(true);
+                const memberData = await getMember(mno);
+                setMemberData(memberData);
             } catch (error) {
-                console.error("Error fetching board data:", error);
+                console.error("Error fetching member data:", error);
             } finally {
                 setFetching(false);
             }
         };
-        fetchData();
-    }, [page, size, refresh, loginState.mno, loadThumbnail]); // 종속성 배열에서 myBoardList.dtoList 제거
+
+        fetchMemberData();
+    }, [mno]);
+
+    useEffect(() => {
+        const fetchBoardAndImages = async () => {
+            if (!memberData || !memberData.mno) return;
+
+            setFetching(true);
+            try {
+                const boardData = await getBoardListByMno({ page, size }, memberData.mno);
+                setMyBoardList(boardData);
+
+                // Fetch all images concurrently
+                const newImageMap = {};
+                await Promise.all(
+                    boardData.dtoList.map(async (board) => {
+                        const image = await loadThumbnail(board.ino);
+                        newImageMap[board.bno] = image;
+                    })
+                );
+                setImageMap(newImageMap);
+            } catch (error) {
+                console.error("Error fetching board or images:", error);
+            } finally {
+                setFetching(false);
+            }
+        };
+
+        fetchBoardAndImages();
+    }, [memberData, page, size, refresh, loadThumbnail]);
 
     const moveMain = useCallback(() => {
         navigate('/');
     }, [navigate]);
-
-    const openLoginModal = () => setIsLoginModalOpen(true);
 
     const openBoardModal = (bno) => {
         setIsBoardModalOpen(isBoardModalOpen === bno ? null : bno);
@@ -93,33 +113,22 @@ const MyComponent = () => {
         moveMain();
     };
 
-    useEffect(() => {
-        if (!isLogin) {
-            openLoginModal();
-        }
-    }, [isLogin]);
-
-    if (!isLogin) {
-        return <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />;
-    }
-
     return (
-        <div className="h-screen w-screen overflow-auto"> {/* 전체 화면에 스크롤이 생기도록 수정 */}
-            <div className="p-5 max-w-7xl mx-auto mt-32"> {/* 내부 콘텐츠에서 스크롤을 허용 */}
+        <div className="h-screen w-screen overflow-auto">
+            <div className="p-5 max-w-7xl mx-auto mt-32">
                 {/* Upper User Info */}
                 <div className="flex items-center mb-8 border-b pb-4 border-gray-300 justify-between">
                     <div className="flex items-center">
-                        <button
-                            className="bg-profile-image bg-cover w-24 h-24 rounded-full mr-5"
-                        />
+                        <button className="bg-profile-image bg-cover w-24 h-24 rounded-full mr-5" />
                         <div>
-                            <h2 className="text-2xl font-semibold">{loginState.nickname}</h2>
-                            <p className="text-gray-600">{loginState.email}</p>
+                            <h2 className="text-2xl font-semibold">{memberData?.nickname}</h2>
+                            <p className="text-gray-600">{memberData?.email}</p>
                         </div>
                     </div>
                     <button
                         className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-blue-600 transition-colors"
-                        onClick={moveToModify}>
+                        onClick={moveToModify}
+                    >
                         회원정보 수정
                     </button>
                 </div>
@@ -131,7 +140,7 @@ const MyComponent = () => {
                         <p>Loading...</p>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {myBoardList.dtoList.map(board => (
+                            {myBoardList.dtoList.map((board) => (
                                 <div
                                     key={board.bno}
                                     className="border rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow"
@@ -139,20 +148,22 @@ const MyComponent = () => {
                                 >
                                     <img
                                         className="w-full h-auto mb-3 cursor-pointer object-cover"
-                                        style={{aspectRatio: '1 / 1', objectFit: 'cover'}}
+                                        style={{ aspectRatio: '1 / 1', objectFit: 'cover' }}
                                         src={imageMap[board.bno]}
                                         alt="Board Thumbnail"
                                     />
-                                    <p className="p-4 text-center text-gray-800 font-medium">{board.title}</p>
+                                    <p className="p-4 text-center text-gray-800 font-medium">
+                                        {board.title}
+                                    </p>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
 
-                <PageComponent serverData={myBoardList} movePage={moveToMyPage}/>
+                <PageComponent serverData={myBoardList} movePage={moveToMyPage} />
 
-                <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal}/>
+                <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
 
                 <BoardModal
                     isOpen={isBoardModalOpen !== null}

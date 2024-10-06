@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import BasicLayout from '../layouts/BasicLayout';
-import ResultComponent from '../components/capeasy/ResultComponent';
+import BasicLayout from '../../layouts/BasicLayout';
+import ResultComponent from '../../components/capeasy/ResultComponent';
 
 const ResultPage = () => {
     

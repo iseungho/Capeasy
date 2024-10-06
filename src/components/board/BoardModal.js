@@ -1,144 +1,141 @@
-import React, { useMemo, useEffect, useState } from "react";
-
+import React, { useMemo, useEffect, useState, useRef } from "react";
 import { getBoard } from "../../api/boardApi";
-import { postReply, getReplyByBno } from "../../api/replyApi";
+import { postReply, getReplyByBno, putReply, deleteReply } from "../../api/replyApi";
+import { postHearts, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
+import { getImage } from "../../api/imageApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
-import { getImage } from "../../api/imageApi";
-import { postHearts, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
-
 import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
 import "@egjs/react-view360/css/view360.min.css";
 
 const BoardModal = ({ isOpen, onClose, bno }) => {
     const [newComment, setNewComment] = useState("");
+    const [editingComment, setEditingComment] = useState(null); // For editing a comment
+    const [commentEditText, setCommentEditText] = useState(""); // Temporary state for edited text
     const { isLogin, loginState } = useCustomLogin();
     const [boardReply, setBoardReply] = useState(null);
     const [boardData, setBoardData] = useState(null);
     const [projection, setProjection] = useState(null);
-    const [fetching, setFetching] = useState(false); // fetching 상태 관리
+    const [fetching, setFetching] = useState(false);
     const [liked, setLiked] = useState(false);
 
-    const { refresh, setRefresh } = useCustomMove();
+    const { refresh, setRefresh, moveToMyPage } = useCustomMove();
 
-    // 모달이 열렸을 때 게시글 데이터를 가져옵니다.
+    const modalRef = useRef(null); // Create a ref for the modal
+
+    // Fetch board data when modal opens
     useEffect(() => {
         const fetchBoardData = async () => {
-            setFetching(true); // 로딩 시작
+            if (!isOpen) return;
+            setFetching(true);
             try {
                 const boardData = await getBoard(bno);
                 setBoardData(boardData);
             } catch (error) {
                 console.error("게시글 데이터를 가져오는 중 오류 발생:", error);
             } finally {
-                setFetching(false); // 로딩 종료
+                setFetching(false);
             }
         };
 
-        if (isOpen) {
-            fetchBoardData();
-        }
+        fetchBoardData();
     }, [isOpen, bno, refresh]);
 
-    // 게시글 데이터가 로드된 후 댓글 및 좋아요 상태를 가져옵니다.
+    // Fetch replies and liked data
     useEffect(() => {
         const fetchReplyData = async () => {
-            setFetching(true); // 로딩 시작
+            if (!isOpen || !boardData) return; // Stop fetching if modal is not open or no board data
+            setFetching(true);
             try {
                 const responseData = await getReplyByBno(bno);
                 setBoardReply(responseData);
             } catch (error) {
                 console.error("댓글 데이터를 가져오는 중 오류 발생:", error);
             } finally {
-                setFetching(false); // 로딩 종료
+                setFetching(false);
             }
         };
 
         const fetchLikedData = async () => {
+            if (!isOpen || !boardData) return; // Stop fetching if modal is not open or no board data
             try {
                 const likedUsers = await findHnoByMnoBno(loginState.mno, bno);
-
                 setLiked(likedUsers);
             } catch (error) {
                 console.error("좋아요 데이터를 가져오는 중 오류 발생:", error);
             }
         };
-        
-        
 
-        if (isOpen && boardData) {
-            fetchReplyData();
-            fetchLikedData();
-        }
+        fetchReplyData();
+        fetchLikedData();
     }, [isOpen, boardData, bno, loginState.mno]);
 
-    // 게시글 데이터가 로드된 후 이미지를 불러옵니다.
+    // Load image after board data is ready
     useEffect(() => {
         const loadImage = async () => {
+            if (!boardData?.ino) return; // Stop loading if no board data or ino
             try {
-                const image = await getImage(boardData.ino); // JSON 형식의 응답 받기
-                const base64Data = image.fileContent; // JSON 응답에서 base64 문자열을 가져옵니다.
-                const blobUrl = createBase64DataToBlob(base64Data); // Blob URL 생성
-                setProjection(new EquirectProjection({ src: blobUrl })); // EquirectProjection에 Blob URL 설정
+                const image = await getImage(boardData.ino);
+                const base64Data = image.fileContent;
+                const blobUrl = createBase64DataToBlob(base64Data);
+                setProjection(new EquirectProjection({ src: blobUrl }));
             } catch (error) {
                 console.error('이미지를 불러오는 중 오류 발생:', error);
             }
         };
 
-        if (boardData?.ino) {
-            loadImage();
-        }
+        loadImage();
     }, [boardData]);
-    
 
-    // Base64 데이터를 Blob으로 변환하는 함수
     const createBase64DataToBlob = (base64Data) => {
-        const byteCharacters = atob(base64Data); // base64 문자열을 디코드
+        const byteCharacters = atob(base64Data);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
             byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' }); // 적절한 MIME 타입 설정
-        return URL.createObjectURL(blob); // Blob URL로 변환
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        return URL.createObjectURL(blob);
     };
 
-    // View360 제어바 설정
-    const controlBar = useMemo(
-        () =>
-            new ControlBar({
-                FullscreenButton: true,
-            }),
-        []
-    );
+    const controlBar = useMemo(() => new ControlBar({ FullscreenButton: true }), []);
 
-    // 모달이 닫혀 있으면 렌더링하지 않음
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                onClose(); // Close modal if click is outside
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOpen, onClose]);
+
     if (!isOpen) return null;
 
-    // 모달 닫기 함수
-    const confirmClose = () => {
-        onClose();
-    };
-
-    // 댓글 추가 함수
     const handleAddComment = () => {
         if (!isLogin) {
             alert("로그인 후 사용하실 수 있습니다.");
         } else if (newComment.trim() !== "") {
-            console.log(bno, loginState.mno, newComment);
             postReply({
                 bno: bno,
                 replierId: loginState.mno,
                 content: newComment,
             });
-            setNewComment(""); // 댓글 입력 후 초기화
-            setRefresh(!refresh); // 댓글 추가 후 리프레시 상태 변경
+            setNewComment("");
+            setRefresh(!refresh);
         }
     };
 
-    // 좋아요 토글 함수
     const handleLikeToggle = async (bno) => {
-        if (!loginState) {
+        if (!isLogin) {
             alert("로그인 후 좋아요를 누를 수 있습니다.");
             return;
         }
@@ -160,17 +157,42 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
         }
     };
 
+    const handleEditClick = (reply) => {
+        setEditingComment(reply.rno);
+        setCommentEditText(reply.content);
+    };
+
+    const handleDeleteClick = async (replyId) => {
+        try {
+            await deleteReply(replyId);
+            setRefresh(!refresh); // Refresh comments after deletion
+        } catch (error) {
+            console.error("댓글 삭제 중 오류 발생:", error);
+        }
+    };
+
+    const handleUpdateComment = async (replyId) => {
+        try {
+            await putReply(replyId, commentEditText);
+            setEditingComment(null);
+            setRefresh(!refresh); // Refresh comments after update
+        } catch (error) {
+            console.error("댓글 수정 중 오류 발생:", error);
+        }
+    };
+
+    const handleMoveMypage = async (mno) => {
+        onClose();
+        moveToMyPage(mno);
+    };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white w-4/5 h-5/6 rounded-lg shadow-lg flex relative overflow-hidden">
+            <div ref={modalRef} className="bg-white w-4/5 h-5/6 rounded-lg shadow-lg flex relative overflow-hidden">
                 {/* 게시글 내용 (왼쪽) */}
                 <div className="w-5/6 p-6 flex flex-col">
-                    <div className="flex items-center mb-4">
-                        <img
-                            className="w-12 h-12 rounded-full mr-4"
-                            src="https://via.placeholder.com/40"
-                            alt="User Avatar"
-                        />
+                    <div className="flex items-center mb-4" onClick={()=>handleMoveMypage(boardData.writerId)} >
+                        <div className="bg-profile-image bg-cover w-12 h-12 rounded-full mr-4" />
                         <h2 className="text-lg font-semibold text-gray-600">
                             {boardData ? boardData.writerNickname : "로딩 중..."}
                         </h2>
@@ -214,26 +236,71 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 <div className="w-1/3 p-5 flex flex-col">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">댓글</h3>
 
-                    {/* 댓글 목록 영역 - 고정된 높이와 스크롤 가능 설정 */}
+                    {/* 댓글 목록 영역 */}
                     <div className="flex-grow overflow-y-auto max-h mb-4">
                         {fetching ? (
                             <p className="text-gray-500">댓글 로딩 중...</p>
-                        ) : boardReply && boardReply.length > 0 ? (
-                            <ul className="space-y-3">
-                                {boardReply.map((reply) => (
-                                    <li key={reply.rno} className="p-2 bg-gray-100 rounded-lg">
-                                        <div className="font-medium text-gray-700">
-                                            {reply.replierNickname}
-                                        </div>
-                                        <p className="text-gray-600 text-sm">{reply.content}</p>
-                                    </li>
-                                ))}
-                            </ul>
                         ) : (
-                            <p className="text-gray-500">댓글이 없습니다.</p>
+                            <>
+                                {boardReply && boardReply.length > 0 ? (
+                                    <ul className="space-y-3">
+                                        {boardReply.map((reply) => (
+                                            <div key={reply.rno} className="relative group">
+                                                {editingComment === reply.rno ? (
+                                                    <div className="flex justify-between">
+                                                        <input
+                                                            type="text"
+                                                            value={commentEditText}
+                                                            onChange={(e) => setCommentEditText(e.target.value)}
+                                                            className="w-5/6 border border-gray-300 rounded-lg px-2 py-1 focus:outline-none"
+                                                        />
+                                                        <button
+                                                            className=""
+                                                            onClick={() => handleUpdateComment(reply.rno)}
+                                                        >
+                                                            저장
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <li key={reply.rno} className="p-2 bg-gray-100 rounded-lg flex items-start justify-between">
+                                                        <div>
+                                                            <div className="font-medium text-gray-700">
+                                                                {reply.replierNickname}
+                                                            </div>
+                                                            <p className="text-gray-600 text-sm">{reply.content}</p>
+                                                        </div>
+                                                        {/* 현재 유저가 작성한 댓글일 때만 ... 버튼 노출 */}
+                                                        {reply.replierId === loginState.mno && (
+                                                            <div>
+                                                                <button
+                                                                    onClick={() => handleEditClick(reply)}
+                                                                    className="ml-2 cursor-pointer text-gray-400 self-start text-xs underline"
+                                                                >
+                                                                    수정
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleDeleteClick(reply.rno)}
+                                                                    className="ml-1 cursor-pointer text-gray-400 self-start text-xs underline"
+                                                                >
+                                                                    삭제
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </li>
+                                                )}
+
+                                            </div>
+                                        ))}
+
+                                    </ul>
+                                ) : (
+                                    <p>댓글이 없습니다.</p>
+                                )}
+                            </>
                         )}
                     </div>
 
+                    {/* 댓글 입력란 */}
                     <div className="flex items-center">
                         <textarea
                             className="flex-grow p-3 border border-gray-300 rounded-md resize-none focus:border-black"
@@ -243,7 +310,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                                 // 최대 100자로 제한
                                 if (e.target.value.length <= 100) {
                                     setNewComment(e.target.value);
-                                }else {
+                                } else {
                                     alert("댓글은 100자까지 입력이 가능합니다!")
                                 }
                             }}
@@ -262,26 +329,6 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                         </button>
                     </div>
                 </div>
-
-                <button
-                    className="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
-                    onClick={confirmClose}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                        />
-                    </svg>
-                </button>
             </div>
         </div>
     );

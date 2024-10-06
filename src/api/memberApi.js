@@ -21,6 +21,11 @@ export const loginPost = async (loginParam) => {
     return res.data
 }
 
+export const getMember = async(mno) => {
+        const res = await axios.get(`${host}/${mno}`);
+    return res.data;
+}
+
 export const signupMember = async (member) => {
     const header = {
         headers: {
