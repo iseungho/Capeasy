@@ -19,7 +19,8 @@ const myBoardListInitState = {
     prevPage: 0,
     nextPage: 0,
     totalPage: 0,
-    current: 0
+    current: 0,
+    writerMno: 0,
 };
 
 const MyComponent = ({mno}) => {
@@ -79,6 +80,7 @@ const MyComponent = ({mno}) => {
             setFetching(true);
             try {
                 const boardData = await getBoardListByMno({ page, size }, memberData.mno);
+                boardData.writerMno = memberData.mno;
                 setMyBoardList(boardData);
 
                 // Fetch all images concurrently

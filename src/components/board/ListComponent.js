@@ -20,6 +20,7 @@ const initListState = {
     nextPage: 0,
     totalPage: 0,
     current: 0,
+    writerMno: 0,
 };
 
 const ListComponent = () => {
@@ -61,6 +62,7 @@ const ListComponent = () => {
             setFetching(true);
             try {
                 const data = await getBoardList({ page, size });
+                data.writerMno = 0;
                 setServerData(data);
     
                 const newImageMap = {};
@@ -149,7 +151,7 @@ const ListComponent = () => {
     };
 
     const handleMoveMypage = async (mno) => {
-        moveToMyPage(mno);
+        moveToMyPage(mno, { page: 1 });
     };
 
     return (
