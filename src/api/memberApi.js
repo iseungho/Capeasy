@@ -58,7 +58,7 @@ export const checkPassword = async (member) => {
         password: member.password
     }
 
-    const res = await axios.post(`${host}/checkPassword`, body, header)
+    const res = await jwtAxios.post(`${host}/check/password`, body, header)
 
     return res.data
 }
