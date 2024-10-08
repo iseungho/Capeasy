@@ -8,6 +8,8 @@ const Loading = <div className="loading-image"></div>
 
 const Main = lazy(() => import("../pages/capeasy/MainPage"))
 
+const About = lazy(() => import("../pages/capeasy/AboutPage"))
+
 const Create = lazy(() => import("../pages/capeasy/CreatePage"))
 
 const Waiting = lazy(() => import("../pages/capeasy/WaitingPage"))
@@ -26,6 +28,10 @@ const root = createBrowserRouter([
     {
         path: "board",
         children: boardRouter()
+    },
+    {
+        path: "about",
+        element: <Suspense fallback={Loading}><About/></Suspense>
     },
     {
         path: "create",

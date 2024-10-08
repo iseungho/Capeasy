@@ -9,7 +9,7 @@ import useCustomMove from "../../hooks/useCustomMove";
 const BasicMenu = ({ children }) => {
   const loginState = useSelector((state) => state.loginSlice);
   const { doLogout, moveToPath } = useCustomLogin();
-  const { moveToMain, moveToBoardList } = useCustomMove();
+  const { moveToMain, moveToAbout, moveToBoardList } = useCustomMove();
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 상태 관리
@@ -58,6 +58,9 @@ const BasicMenu = ({ children }) => {
               <button className="text-gray-500 font-semibold text-xl hidden md:block" onClick={moveToBoardList}>
                 Community
               </button>
+              <button className="text-gray-500 font-semibold text-xl hidden md:block" onClick={moveToAbout}>
+                    About
+                  </button>
             </div>
 
             {/* 모바일 메뉴 토글 */}
@@ -100,6 +103,12 @@ const BasicMenu = ({ children }) => {
                       onClick={moveToBoardList}
                   >
                     Community
+                  </button>
+                  <button
+                      className="block w-full text-left text-gray-700 px-4 py-2 hover:bg-gray-200"
+                      onClick={moveToAbout}
+                  >
+                    About
                   </button>
                 </div>
               </div>

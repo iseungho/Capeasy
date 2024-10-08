@@ -8,6 +8,9 @@ module.exports = {
         "loading-image-s": "url('./asset/images/loading.gif')",
         "logo-image": "url('./asset/images/logo.png')",
         "profile-image": "url('./asset/icon/Cabbi.jpg')",
+        "filter-image": "url('./asset/images/filter.png')",
+        "about-image": "url('./asset/backgrounds/background.jpg')",
+        "capture-image": "url('./asset/images/capture.png')",
         "main-slogan-1":
           "url('https://ak.picdn.net/shutterstock/videos/1072316771/thumb/1.jpg')",
         "main-slogan-2":
