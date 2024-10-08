@@ -29,7 +29,14 @@ const useCustomMove = () => {
 
     const moveToCreate = () => {
         navigate({
-            pathname: `../create`,
+            pathname: `/create`,
+
+        })
+    }
+
+    const moveToAbout = () => {
+        navigate({
+            pathname: `/about`,
 
         })
     }
@@ -38,7 +45,7 @@ const useCustomMove = () => {
         const vno = parseInt(data.vno)
         setRefresh(!refresh)
         navigate({
-            pathname: `../waiting/${vno}`
+            pathname: `/waiting/${vno}`
         })
     }
 
@@ -46,7 +53,7 @@ const useCustomMove = () => {
         const ino = parseInt(data.ino)
         setRefresh(!refresh)
         navigate({
-            pathname: `../result/${ino}`
+            pathname: `/result/${ino}`
         })
     }
 
@@ -88,7 +95,7 @@ const useCustomMove = () => {
         })
     }
 
-    return {moveToMain, moveToBoardList, moveToCreate, moveToWait, moveToResult, moveToMyPage, setRefresh, page, size, refresh}
+    return {moveToMain, moveToAbout, moveToBoardList, moveToCreate, moveToWait, moveToResult, moveToMyPage, setRefresh, page, size, refresh}
 }
 
 export default useCustomMove
