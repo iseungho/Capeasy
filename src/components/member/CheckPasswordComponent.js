@@ -1,10 +1,8 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { checkPassword } from "../../api/memberApi";
 import { updateLoginInfo } from "../../slices/loginSlice";
 import ModifyPage from "../../pages/member/ModifyPage";
-import ResultModal from "../common/ResultModal";
 
 const initState = {
     mno: 0,
@@ -12,22 +10,20 @@ const initState = {
 }
 
 const CheckPasswordComponent = () => {
-
-    const [member, setMember] = useState(initState)
-    const loginInfo = useSelector(state => state.loginSlice)
+    const [member, setMember] = useState(initState);
+    const loginInfo = useSelector(state => state.loginSlice);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [error, setError] = useState(null);
-    const [result, setResult] = useState(null);
     const dispatch = useDispatch();
 
     useEffect(() => {
         const { password, ...rest } = loginInfo;
-        setMember({ ...rest, mno: loginInfo.mno })
-    }, [loginInfo])
+        setMember({ ...rest, mno: loginInfo.mno });
+    }, [loginInfo]);
 
     const handleChange = (e) => {
-        member[e.target.name] = e.target.value
-        setMember({ ...member })
+        member[e.target.name] = e.target.value;
+        setMember({ ...member });
     }
 
     const handleClickCheckPassword = async () => {
@@ -35,12 +31,13 @@ const CheckPasswordComponent = () => {
             const result = await checkPassword(member);
             if (result) {
                 dispatch(updateLoginInfo({ ...loginInfo, password: member.password }));
-                setResult('Redirecting to modify page...');
+                alert("비밀번호 확인이 완료되었습니다.");
+                setIsAuthenticated(true);
             }
         } catch (error) {
             if (error.response && error.response.data && error.response.data.error) {
                 if (error.response.data.error === "INVALID_PASSWORD") {
-                    setError("The password you entered is incorrect. Please try again.");
+                    setError("입력한 비밀번호가 잘못되었습니다. 다시 시도하십시오.");
                 } else {
                     setError(error.response.data.error);
                 }
@@ -50,9 +47,11 @@ const CheckPasswordComponent = () => {
         }
     }
 
-    const closeModal = () => {
-        setResult(null);
-        setIsAuthenticated(true);
+    // 엔터키 눌렀을 때 비밀번호 확인
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleClickCheckPassword();
+        }
     }
 
     if (isAuthenticated) {
@@ -60,29 +59,27 @@ const CheckPasswordComponent = () => {
     }
 
     return (
-        <div className="border-2 border-neutral-300 mt-10 m-2 p-4">
+        <div className="max-w-lg mx-auto p-6 sm:w-full md:w-2/3 lg:w-2/5">
+            <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">회원정보 수정</h1>
 
-            {result ? <ResultModal title={'Password Check'} content={result} callbackFn={closeModal}></ResultModal> : null}
-            {error ? <div className="text-red-500">{error}</div> : null}
+            {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
-            <div className="flex justify-center">
-                <div className="relative mb-4 flex w-full flex-wrap items-stretch">
-                    <div className="p-6 text-right font-bold w-32">Password</div>
-                    <input className="p-6 rounded-r border border-solid border-neutral-300 shadow-md flex-grow"
-                        name="password" type={'password'} value={member.password} onChange={handleChange}>
-                    </input>
-                </div>
+            <div className="mb-6">
+                <label className="block text-lg font-medium text-gray-700 mb-2">비밀번호 확인</label>
+                <input
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-gray-500 focus:outline-none"
+                    name="password" type="password" value={member.password} onChange={handleChange}
+                    onKeyDown={handleKeyDown}  // 엔터키 입력 처리
+                    placeholder="비밀번호를 입력하세요" />
             </div>
 
-            <div className="flex justify-center">
-                <div className="relative mb-4 flex w-full flex-wrap justify-end">
-                    <button type="button" onClick={handleClickCheckPassword}
-                        className="rounded p-4 w-36 bg-neutral-500 text-xl text-white">
-                        Check
-                    </button>
-                </div>
+            <div className="text-center">
+                <button
+                    type="button" onClick={handleClickCheckPassword}
+                    className="w-full py-3 rounded-lg bg-gray-500 text-white text-xl font-semibold hover:bg-gray-600 transition-colors duration-300">
+                    확인
+                </button>
             </div>
-
         </div>
     );
 }
