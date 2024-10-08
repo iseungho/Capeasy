@@ -1,5 +1,3 @@
-// components/HowToUseModal.js
-
 import React from "react";
 import useCustomMove from "../../hooks/useCustomMove";
 
