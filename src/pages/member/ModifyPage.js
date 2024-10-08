@@ -1,7 +1,7 @@
 import ModifyComponent from "../../components/member/ModifyComponent";
 import BasicLayout from "../../layouts/BasicLayout";
 
-const ModfyPage = () => {
+const ModifyPage = () => {
     return (
         <div className='fixed top-0 left-0 z-[1055] flex flex-col h-full w-full'>
             <BasicLayout>
@@ -13,4 +13,4 @@ const ModfyPage = () => {
     );
 }
 
-export default ModfyPage;
+export default ModifyPage;
