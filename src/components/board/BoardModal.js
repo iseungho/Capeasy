@@ -9,7 +9,7 @@ import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
 import "@egjs/react-view360/css/view360.min.css";
 
 const BoardModal = ({ isOpen, onClose, bno }) => {
-    const [newComment, setNewComment] = useState("");
+    const [newComment, setNewComment] = useState(null);
     const [editingComment, setEditingComment] = useState(null); // For editing a comment
     const [commentEditText, setCommentEditText] = useState(""); // Temporary state for edited text
     const { isLogin, loginState } = useCustomLogin();
@@ -40,6 +40,18 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
 
         fetchBoardData();
     }, [isOpen, bno, refresh]);
+
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden'; // 모달이 열리면 body 스크롤 비활성화
+        } else {
+            document.body.style.overflow = ''; // 모달이 닫히면 body 스크롤 복구
+        }
+
+        return () => {
+            document.body.style.overflow = ''; // 컴포넌트 언마운트 시에도 복구
+        };
+    }, [isOpen]);
 
     // Fetch replies and liked data
     useEffect(() => {
@@ -215,103 +227,113 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 </div>
 
                 {/* 댓글 창 (오른쪽) */}
-                <div className="w-full md:w-1/3 p-5 flex flex-col overflow-y-auto">
-                    <div className="flex items-center mb-4" onClick={() => handleMoveMypage(boardData.writerId)}>
-                        <div className="bg-profile-image bg-cover w-12 h-12 rounded-full mr-4" />
-                        <h2 className="text-lg font-semibold text-gray-600">
-                            {boardData ? boardData.writerNickname : "로딩 중..."}
-                        </h2>
-                    </div>
-                    {boardData && !fetching ? (
-                        <>
-                            <h1 className="text-2xl font-bold mt-2 mb-2 text-gray-800">
-                                {boardData.title}
-                            </h1>
-                            <p className="text-gray-700 mb-2 text-lg leading-relaxed">
-                                {boardData.content}
-                            </p>
-                            <button
-                                className="cursor-pointer self-start mb-2"
-                                onClick={() => handleLikeToggle(bno)}
-                            >
-                                {liked ? "❤️" : "🤍"} 좋아요 {boardData.heartCount}개
-                            </button>
-
-                        </>
-                    ) : (
-                        !fetching && <p>게시글을 불러오는 중입니다...</p>
-                    )}
-                    {/* 댓글 목록 영역 */}
-                    <div className="flex-grow h-max mb-4">
-                        {fetching ? (
-                            <p className="text-gray-500">댓글 로딩 중...</p>
-                        ) : (
+                <div className="md:w-1/3 p-5 flex flex-col overflow-y-auto">
+                    <div className="overflow-y-auto custom-scrollbar">
+                        <div className="flex items-center mb-4" onClick={() => handleMoveMypage(boardData.writerId)}>
+                            <div className="bg-profile-image bg-cover w-12 h-12 rounded-full mr-4"/>
+                            <h2 className="text-lg font-semibold text-gray-600">
+                                {boardData ? boardData.writerNickname : "로딩 중..."}
+                            </h2>
+                        </div>
+                        {boardData && !fetching ? (
                             <>
-                                {boardReply && boardReply.length > 0 ? (
-                                    <ul className="space-y-3">
-                                        {boardReply.map((reply) => (
-                                            <div key={reply.rno} className="relative group">
-                                                {editingComment === reply.rno ? (
-                                                    <div
-                                                        className="flex p-2 bg-gray-100 rounded-lg items-start justify-between">
-                                                        <input
-                                                            type="text"
-                                                            value={commentEditText}
-                                                            onChange={(e) => setCommentEditText(e.target.value)}
-                                                            className="w-5/6 bg-gray-100 px-2 py-1 focus:outline-none focus:cursor-text cursor-pointer"
-                                                        />
-                                                        <div className="flex justify-center w-1/6">
-                                                            <button
-                                                                className="p-1"
-                                                                onClick={() => handleUpdateComment(reply.rno)}
-                                                            >
-                                                                저장
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <li key={reply.rno}
-                                                        className="p-2 bg-gray-100 rounded-lg flex items-start justify-between">
-                                                        <div>
-                                                            <div className="font-medium text-gray-700">
-                                                                {reply.replierNickname}
-                                                            </div>
-                                                            <p className="text-gray-600 text-sm">{reply.content}</p>
-                                                        </div>
-                                                        {/* 현재 유저가 작성한 댓글일 때만 ... 버튼 노출 */}
-                                                        {reply.replierId === loginState.mno && (
-                                                            <div>
+                                <h1 className="text-2xl font-bold mt-2 mb-2 text-gray-800">
+                                    {boardData.title}
+                                </h1>
+                                <p className="text-gray-700 mb-2 text-lg leading-relaxed">
+                                    {boardData.content}
+                                </p>
+                                <button
+                                    className="cursor-pointer self-start mb-2"
+                                    onClick={() => handleLikeToggle(bno)}
+                                >
+                                    {liked ? "❤️" : "🤍"} 좋아요 {boardData.heartCount}개
+                                </button>
+
+                            </>
+                        ) : (
+                            !fetching && <p>게시글을 불러오는 중입니다...</p>
+                        )}
+                        {/* 댓글 목록 영역 */}
+                        <div className="flex-grow h-max mb-4">
+                            {fetching ? (
+                                <p className="text-gray-500">댓글 로딩 중...</p>
+                            ) : (
+                                <>
+                                    {boardReply && boardReply.length > 0 ? (
+                                        <ul className="space-y-3">
+                                            {boardReply.map((reply) => (
+                                                <div key={reply.rno} className="relative group">
+                                                    {editingComment === reply.rno ? (
+                                                        <div
+                                                            className="flex p-2 bg-gray-100 rounded-lg items-center justify-between">
+                                                            <input
+                                                                type="text"
+                                                                value={commentEditText}
+                                                                onChange={(e) => {
+                                                                    if (e.target.value.length <= 100) {
+                                                                        setCommentEditText(e.target.value);
+                                                                    } else {
+                                                                        alert("댓글은 100자까지 입력이 가능합니다!")
+                                                                    }
+                                                                }}
+                                                                className="flex-grow w-4/5 bg-gray-100 px-2 py-1 focus:outline-none focus:cursor-text cursor-pointer"
+                                                            />
+                                                            <div className="flex">
                                                                 <button
-                                                                    onClick={() => handleEditClick(reply)}
-                                                                    className="ml-2 cursor-pointer text-gray-400 self-start text-xs underline"
+                                                                    className="px-4 py-2 rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-200"
+                                                                    onClick={() => handleUpdateComment(reply.rno)}
                                                                 >
                                                                     수정
                                                                 </button>
-                                                                <button
-                                                                    onClick={() => handleDeleteClick(reply.rno)}
-                                                                    className="ml-1 cursor-pointer text-gray-400 self-start text-xs underline"
-                                                                >
-                                                                    삭제
-                                                                </button>
                                                             </div>
-                                                        )}
-                                                    </li>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p>댓글이 없습니다.</p>
-                                )}
-                            </>
-                        )}
-                    </div>
+                                                        </div>
+                                                    ) : (
+                                                        <li key={reply.rno}
+                                                            className="p-2 bg-gray-100 rounded-lg flex items-start justify-between">
+                                                            <div
+                                                                className="flex-grow mr-2"> {/* 댓글 내용이 버튼을 침범하지 않도록 공간을 차지하게 설정 */}
+                                                                <div className="font-medium text-gray-700">
+                                                                    {reply.replierNickname}
+                                                                </div>
+                                                                <div
+                                                                    className="text-gray-600 text-sm">{reply.content}</div>
+                                                            </div>
+                                                            {reply.replierId === loginState.mno && (
+                                                                <div
+                                                                    className="flex-shrink-0 flex"> {/* 버튼이 고정된 너비를 가지도록 설정 */}
+                                                                    <button
+                                                                        onClick={() => handleEditClick(reply)}
+                                                                        className="cursor-pointer mr-1 text-gray-400 text-xs underline"
+                                                                    >
+                                                                        수정
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => handleDeleteClick(reply.rno)}
+                                                                        className="cursor-pointer text-gray-400 text-xs underline"
+                                                                    >
+                                                                        삭제
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </li>
 
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p>댓글이 없습니다.</p>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
                     {/* 댓글 입력란 */}
                     <div className="flex items-center">
                         <textarea
-                            className="flex-grow p-3 border border-gray-300 rounded-md resize-none"
-                            placeholder="댓글을 입력하세요..."
+                            className="flex-grow p-3 mt-1 border-b border-gray-300 focus:outline-none  overflow-hidden resize-none"
+                            placeholder="댓글 추가..."
                             value={newComment}
                             onChange={(e) => {
                                 if (e.target.value.length <= 100) {
@@ -327,7 +349,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                             }}
                         />
                         <button
-                            className="ml-2 p-2"
+                            className="ml-1 px-4 py-2 flex-shrink-0 rounded-full hover:bg-gray-200 transition-all duration-300"
                             onClick={handleAddComment}
                         >
                             입력

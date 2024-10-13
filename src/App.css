@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+.custom-scrollbar {
+  /* Chrome, Safari, Edge */
+  &::-webkit-scrollbar {
+    display: none; /* 스크롤바 숨김 */
+  }
+
+  /* Firefox */
+  scrollbar-width: none; /* 스크롤바 숨김 */
+}
