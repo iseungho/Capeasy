@@ -8,6 +8,8 @@ import { getHeartListByBno, postHearts, deleteHeart, findHnoByMnoBno } from "../
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import PageComponent from "../common/PageComponent";
+import { formatDistanceToNow } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 const initListState = {
     dtoList: [],
@@ -21,6 +23,8 @@ const initListState = {
     totalPage: 0,
     current: 0,
     writerMno: 0,
+    regDate: null,
+    modDate: null,
 };
 
 const ListComponent = () => {
@@ -64,7 +68,7 @@ const ListComponent = () => {
                 const data = await getBoardList({ page, size });
                 data.writerMno = 0;
                 setServerData(data);
-    
+
                 const newImageMap = {};
                 for (const board of data.dtoList) {
                     const image = await loadThumbnail(board.ino);
@@ -162,17 +166,32 @@ const ListComponent = () => {
                 {serverData.dtoList.map((board) => (
                     <div key={board.bno} className="post-item border-b border-gray-300 py-4 m-6 bg-white shadow-md hover:shadow-lg transition-shadow rounded-lg">
                         <div className="post-header flex justify-between items-center mb-3 px-4">
-                            <div className="flex items-center" onClick={()=> handleMoveMypage(board.writerId)}>
+                            <div className="flex items-center" onClick={() => handleMoveMypage(board.writerId)}>
                                 <div className="bg-profile-image bg-cover w-10 h-10 rounded-full mr-3"/>
                                 <div>
                                     <p className="accent-gray-800">{board.writerNickname}</p>
                                 </div>
                             </div>
-                            {board.writerId === loginState.mno && (
-                                <button className="text-gray-500" onClick={() => handleBoardInfoModalOpen(board.bno)}>
-                                ...
-                            </button>
-                            )}
+                            <div className="flex items-center">
+                                <p className="text-gray-600  text-sm">
+                                    {board && (board.regDate === board.modDate
+                                        ? `${formatDistanceToNow(new Date(board.regDate), {
+                                            addSuffix: true,
+                                            locale: ko
+                                        })}`
+                                        : `${formatDistanceToNow(new Date(board.modDate), {
+                                            addSuffix: true,
+                                            locale: ko
+                                        })}(수정됨)`)}
+                                </p>
+                                {board.writerId === loginState.mno && (
+                                    <button className="flex flex-col items-center justify-center text-gray-500 ml-4"onClick={() => handleBoardInfoModalOpen(board.bno)}>
+                                        <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1" />
+                                        <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1" />
+                                        <span className="block w-1 h-1 bg-gray-500 rounded-full" />
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         <div className="post-body"
@@ -185,6 +204,7 @@ const ListComponent = () => {
                             />
                             <p className="px-4 cursor-pointer font-semibold text-xl md:text-xl">
                                 {board.title}
+                                {board.regData}
                             </p>
                             <p className="px-4 cursor-pointer text-sm md:text-base">
                                 {board.content}

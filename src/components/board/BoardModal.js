@@ -7,10 +7,12 @@ import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
 import "@egjs/react-view360/css/view360.min.css";
+import { formatDistanceToNow } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 const BoardModal = ({ isOpen, onClose, bno }) => {
-    const [newComment, setNewComment] = useState(null);
-    const [editingComment, setEditingComment] = useState(null); // For editing a comment
+    const [newComment, setNewComment] = useState("");
+    const [editingComment, setEditingComment] = useState(""); // For editing a comment
     const [commentEditText, setCommentEditText] = useState(""); // Temporary state for edited text
     const { isLogin, loginState } = useCustomLogin();
     const [boardReply, setBoardReply] = useState(null);
@@ -193,6 +195,11 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
         }
     };
 
+    const handleCancelEdit = () => {
+        setEditingComment(null);
+        setCommentEditText("");
+    };
+
     const handleMoveMypage = async (mno) => {
         onClose();
         moveToMyPage(mno);
@@ -227,13 +234,26 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 </div>
 
                 {/* 댓글 창 (오른쪽) */}
-                <div className="md:w-1/3 p-5 flex flex-col overflow-y-auto">
+                <div className="md:w-1/3 p-5 flex flex-col justify-between overflow-y-auto">
                     <div className="overflow-y-auto custom-scrollbar">
-                        <div className="flex items-center mb-4" onClick={() => handleMoveMypage(boardData.writerId)}>
-                            <div className="bg-profile-image bg-cover w-12 h-12 rounded-full mr-4"/>
-                            <h2 className="text-lg font-semibold text-gray-600">
-                                {boardData ? boardData.writerNickname : "로딩 중..."}
-                            </h2>
+                        <div className="flex items-center mb-4 justify-between">
+                            <div className="flex items-center" onClick={() => handleMoveMypage(boardData.writerId)}>
+                                <div className="bg-profile-image bg-cover w-12 h-12 rounded-full mr-4"/>
+                                <h2 className="text-lg font-semibold text-gray-600">
+                                    {boardData ? boardData.writerNickname : "로딩 중..."}
+                                </h2>
+                            </div>
+                            <p className="text-gray-600 text-sm">
+                                {boardData && (boardData.regDate === boardData.modDate
+                                    ? `${formatDistanceToNow(new Date(boardData.regDate), {
+                                        addSuffix: true,
+                                        locale: ko
+                                    })}`
+                                    : `${formatDistanceToNow(new Date(boardData.modDate), {
+                                        addSuffix: true,
+                                        locale: ko
+                                    })}(수정됨)`)}
+                            </p>
                         </div>
                         {boardData && !fetching ? (
                             <>
@@ -279,7 +299,10 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                                                                 }}
                                                                 className="flex-grow w-4/5 bg-gray-100 px-2 py-1 focus:outline-none focus:cursor-text cursor-pointer"
                                                             />
-                                                            <div className="flex">
+                                                            <div className="flex flex-shrink-0">
+                                                                <button onClick={handleCancelEdit}
+                                                                        className="px-4 py-2 rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-200">취소
+                                                                </button>
                                                                 <button
                                                                     className="px-4 py-2 rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-200"
                                                                     onClick={() => handleUpdateComment(reply.rno)}
@@ -292,9 +315,26 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                                                         <li key={reply.rno}
                                                             className="p-2 bg-gray-100 rounded-lg flex items-start justify-between">
                                                             <div
-                                                                className="flex-grow mr-2"> {/* 댓글 내용이 버튼을 침범하지 않도록 공간을 차지하게 설정 */}
-                                                                <div className="font-medium text-gray-700">
-                                                                    {reply.replierNickname}
+                                                                className="flex-grow mr-2">
+                                                                <div className="flex items-center flex-shrink-0">
+                                                                    <div className="font-medium text-gray-700">
+                                                                        {reply.replierNickname}
+                                                                    </div>
+                                                                    <p className="mr-1 text-gray-600 text-xs ml-2">
+                                                                        {reply.modDate && reply.regDate !== reply.modDate ? (
+                                                                            <>
+                                                                                {formatDistanceToNow(new Date(reply.modDate), {
+                                                                                    addSuffix: true,
+                                                                                    locale: ko
+                                                                                })}(수정됨)
+                                                                            </>
+                                                                        ) : (
+                                                                            formatDistanceToNow(new Date(reply.regDate), {
+                                                                                addSuffix: true,
+                                                                                locale: ko
+                                                                            })
+                                                                        )}
+                                                                    </p>
                                                                 </div>
                                                                 <div
                                                                     className="text-gray-600 text-sm">{reply.content}</div>
@@ -309,7 +349,11 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                                                                         수정
                                                                     </button>
                                                                     <button
-                                                                        onClick={() => handleDeleteClick(reply.rno)}
+                                                                        onClick={() => {
+                                                                            if (window.confirm("정말 삭제하시겠습니까?")) {
+                                                                                handleDeleteClick(reply.rno);
+                                                                            }
+                                                                        }}
                                                                         className="cursor-pointer text-gray-400 text-xs underline"
                                                                     >
                                                                         삭제
