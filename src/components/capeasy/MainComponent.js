@@ -51,19 +51,18 @@ function MainComponent(props) {
 
     return (
         <div>
-            <section className="bg-main-background bg-cover text-white min-h-screen flex items-center relative overflow-hidden">
+            <section className="text-white min-h-screen flex items-center relative overflow-hidden">
                 {/* YouTube 비디오 배경 */}
-                <div className="absolute inset-0 w-full h-full z-0">
+                <div className="absolute inset-0 z-0">
                     <iframe
                         src="https://www.youtube.com/embed/i_6QY64wefM?autoplay=1&mute=1&loop=1&playlist=i_6QY64wefM&controls=0&modestbranding=0&showinfo=0&rel=0&vq=hd1080"
                         title="pano demo"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        className="absolute top-0 left-0 w-full h-full object-cover pointer-events-none"
+                        className="absolute mt-1 top-0 left-0 w-full h-full object-cover pointer-events-none"
                         style={{
-
                             height: '60vw', // 16:9 비율을 위한 설정
                             minHeight: '100vh',
-                            minWidth: '177.78vh', // 16:9 비율을 위한 설정
+                            minWidth: '174vh', // 16:9 비율을 위한 설정
                         }}
                     ></iframe>
                 </div>
