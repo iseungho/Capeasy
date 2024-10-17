@@ -237,7 +237,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 <div className="md:w-1/3 p-5 flex flex-col justify-between overflow-y-auto">
                     <div className="overflow-y-auto custom-scrollbar">
                         <div className="flex items-center mb-4 justify-between">
-                            <div className="flex items-center" onClick={() => handleMoveMypage(boardData.writerId)}>
+                            <div className="flex items-center cursor-pointer" onClick={() => handleMoveMypage(boardData.writerId)}>
                                 <div className="bg-profile-image bg-cover w-12 h-12 rounded-full mr-4"/>
                                 <h2 className="text-lg font-semibold text-gray-600">
                                     {boardData ? boardData.writerNickname : "로딩 중..."}

@@ -91,7 +91,7 @@ const ResultComponent = ({ ino }) => {
                     onClick={handleDownloadClick}
                     className="bg-gray-500 text-white px-6 py-4 rounded-lg hover:bg-gray-600 transition mx-2"
                 >
-                    ⬇️ 원본 다운로드
+                    ⬇️ 다운로드
                 </button>
                 <button
                     onClick={openWriteModal}

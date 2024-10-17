@@ -71,8 +71,7 @@ const ListComponent = () => {
 
                 const newImageMap = {};
                 for (const board of data.dtoList) {
-                    const image = await loadThumbnail(board.ino);
-                    newImageMap[board.bno] = image;
+                    newImageMap[board.bno] = await loadThumbnail(board.ino);
                 }
                 setImageMap(newImageMap);
     
@@ -164,9 +163,9 @@ const ListComponent = () => {
                 {fetching && <p>Loading...</p>}
 
                 {serverData.dtoList.map((board) => (
-                    <div key={board.bno} className="post-item border-b border-gray-300 py-4 m-6 bg-white shadow-md hover:shadow-lg transition-shadow rounded-lg">
+                    <div key={board.bno} className="post-item border-b border-gray-300 py-4 m-6 bg-white shadow-xl hover:shadow-2xl transition-shadow rounded-lg">
                         <div className="post-header flex justify-between items-center mb-3 px-4">
-                            <div className="flex items-center" onClick={() => handleMoveMypage(board.writerId)}>
+                            <div className="flex items-center cursor-pointer" onClick={() => handleMoveMypage(board.writerId)}>
                                 <div className="bg-profile-image bg-cover w-10 h-10 rounded-full mr-3"/>
                                 <div>
                                     <p className="accent-gray-800">{board.writerNickname}</p>
@@ -185,7 +184,7 @@ const ListComponent = () => {
                                         })}(수정됨)`)}
                                 </p>
                                 {board.writerId === loginState.mno && (
-                                    <button className="flex flex-col items-center justify-center text-gray-500 ml-4"onClick={() => handleBoardInfoModalOpen(board.bno)}>
+                                    <button className="flex flex-col items-center justify-center text-gray-500 p-2 ml-4" onClick={() => handleBoardInfoModalOpen(board.bno)}>
                                         <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1" />
                                         <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1" />
                                         <span className="block w-1 h-1 bg-gray-500 rounded-full" />
