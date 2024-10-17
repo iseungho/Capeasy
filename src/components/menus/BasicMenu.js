@@ -14,6 +14,7 @@ const BasicMenu = ({ children }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 상태 관리
   const [isMenuOpen, setIsMenuOpen] = useState(false); // 모바일 메뉴 상태 관리
+  const [showScrollButton, setShowScrollButton] = useState(false); // 스크롤 버튼 상태 추가
 
   const handleLogout = useCallback(() => {
     doLogout();
@@ -30,6 +31,24 @@ const BasicMenu = ({ children }) => {
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollButton(true);
+      } else {
+        setShowScrollButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // 맨 위로 스크롤하는 함수
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -131,6 +150,36 @@ const BasicMenu = ({ children }) => {
                   onLogout={handleLogout}
               />
             </>
+        )}
+        {showScrollButton && (
+            <div className="fixed bottom-10 right-10 flex items-center space-x-4">
+              {/* Contact Us 버튼 */}
+              <button
+                  onClick={() => window.location.href = 'mailto:ghehf51@naver.com'}
+                  className="bg-green-400 text-white px-6 py-3 rounded-full text-lg font-semibold
+                 hover:bg-green-500 shadow-lg transition-transform transform hover:scale-105"
+              >
+                Contact Us
+              </button>
+
+              {/* 맨 위로 스크롤 버튼 */}
+              <button
+                  onClick={scrollToTop}
+                  className="bg-green-400 text-white px-4 py-4 rounded-full
+                 hover:bg-green-500 transition-transform transform hover:scale-110"
+              >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-6 h-6"
+                >
+                  <path
+                      d="M12 8l-6 6 1.5 1.5L12 11l4.5 4.5L18 14l-6-6z"
+                  />
+                </svg>
+              </button>
+            </div>
         )}
       </div>
   );
