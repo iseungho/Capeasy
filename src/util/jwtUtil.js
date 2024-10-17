@@ -73,7 +73,7 @@ const beforeRes = async (res) => {
 
         originalRequest.headers.Authorization = `Bearer ${result.accessToken}`
 
-        return await axios(originalRequest)
+        return axios(originalRequest);
 
     }
 
