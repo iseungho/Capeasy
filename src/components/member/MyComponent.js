@@ -1,13 +1,15 @@
 import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCustomLogin from "../../hooks/useCustomLogin";
+import ModifyModal from "../common/ModifyModal";
 import LoginModal from "../member/LoginModal";
 import PageComponent from "../common/PageComponent";
-import { getBoardListByMno } from "../../api/boardApi";
+import { deleteBoard, getBoardListByMno } from "../../api/boardApi";
 import { getThumbnail } from "../../api/imageApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import BoardModal from "../board/BoardModal";
 import { getMember } from "../../api/memberApi";
+import BoardInfoModal from "../common/BoardInfoModal";
 
 const myBoardListInitState = {
     dtoList: [],
@@ -24,7 +26,7 @@ const myBoardListInitState = {
 };
 
 const MyComponent = ({mno}) => {
-    const { page, size, refresh, moveToMyPage } = useCustomMove();
+    const { page, size, refresh, moveToMyPage, setRefresh } = useCustomMove();
     const { moveToModify } = useCustomLogin();
     const [myBoardList, setMyBoardList] = useState(myBoardListInitState);
     const [fetching, setFetching] = useState(false);
@@ -33,6 +35,10 @@ const MyComponent = ({mno}) => {
     const navigate = useNavigate();
     const [imageMap, setImageMap] = useState({});
     const [memberData, setMemberData] = useState(null);
+
+    const [isModifyModalOpen, setIsModifyModalOpen] = useState(null);
+    const [isBoardInfoModalOpen, setIsBoardInfoModalOpen] = useState(null);
+    const {loginState } = useCustomLogin();
 
     const loadThumbnail = useCallback(async (ino) => {
         try {
@@ -87,8 +93,7 @@ const MyComponent = ({mno}) => {
                 const newImageMap = {};
                 await Promise.all(
                     boardData.dtoList.map(async (board) => {
-                        const image = await loadThumbnail(board.ino);
-                        newImageMap[board.bno] = image;
+                        newImageMap[board.bno] = await loadThumbnail(board.ino);
                     })
                 );
                 setImageMap(newImageMap);
@@ -114,6 +119,29 @@ const MyComponent = ({mno}) => {
         setIsLoginModalOpen(false);
         moveMain();
     };
+
+    const handleBoardInfoModalOpen = (bno) => {
+        setIsBoardInfoModalOpen(isBoardInfoModalOpen === bno ? null : bno);
+    };
+    const handleModifyBoard = async (bno) => {
+        setIsModifyModalOpen(isModifyModalOpen === bno ? null : bno);
+    };
+
+    const handleDeleteBoard = async (bno) => {
+        try {
+            await deleteBoard(bno);
+            alert('게시글이 삭제되었습니다.');
+            setRefresh(!refresh);
+        } catch (error) {
+            console.error("Error deleting board:", error);
+        }
+    };
+
+    const closeModifyModal = async () => {
+        setIsModifyModalOpen(null);
+        setRefresh(!refresh);
+    }
+
 
     return (
         <div className="h-screen w-screen overflow-auto">
@@ -149,14 +177,27 @@ const MyComponent = ({mno}) => {
                                     onClick={() => openBoardModal(board.bno)}
                                 >
                                     <img
-                                        className="w-full h-auto mb-3 cursor-pointer object-cover"
+                                        className="w-full h-auto mb-1 cursor-pointer object-cover"
                                         style={{ aspectRatio: '1 / 1', objectFit: 'cover' }}
                                         src={imageMap[board.bno]}
                                         alt="Board Thumbnail"
                                     />
-                                    <p className="p-4 text-center text-gray-800 font-medium">
-                                        {board.title}
-                                    </p>
+                                    <div className="flex justify-between items-center p-4">
+                                        <p className="text-gray-800 font-medium text-center">
+                                            {board.title}
+                                        </p>
+                                        {board.writerId === loginState.mno && (
+                                            <button className="flex flex-col items-center justify-center text-gray-500 p-2"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // 부모의 클릭 이벤트 방지
+                                                        handleBoardInfoModalOpen(board.bno);
+                                                    }}>
+                                                <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1"/>
+                                                <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1"/>
+                                                <span className="block w-1 h-1 bg-gray-500 rounded-full"/>
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -171,6 +212,20 @@ const MyComponent = ({mno}) => {
                     isOpen={isBoardModalOpen !== null}
                     onClose={() => setIsBoardModalOpen(null)}
                     bno={isBoardModalOpen}
+                />
+
+                <ModifyModal
+                    isOpen={isModifyModalOpen !== null}
+                    onClose={() => closeModifyModal()}
+                    bno={isModifyModalOpen}
+                />
+
+                <BoardInfoModal
+                    isOpen={isBoardInfoModalOpen !== null}
+                    onClose={() => setIsBoardInfoModalOpen(null)}
+                    bno={isBoardInfoModalOpen}
+                    onModify={handleModifyBoard}
+                    onDelete={handleDeleteBoard}
                 />
             </div>
         </div>
