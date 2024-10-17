@@ -14,11 +14,12 @@ const LoginModal = ({ isOpen, onClose }) => {
 
     // 입력 핸들러
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, type, value, checked } = e.target;
+
         if (isLogin) {
             setLoginParam(prevState => ({
                 ...prevState,
-                [name]: value,
+                [name]: type === 'checkbox' ? checked : value, // 체크박스일 경우 checked 값을 사용
             }));
         } else {
             setSignupParam(prevState => ({
