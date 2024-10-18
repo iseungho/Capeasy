@@ -152,7 +152,7 @@ const BasicMenu = ({ children }) => {
             </>
         )}
         {showScrollButton && (
-            <div className="fixed bottom-10 right-10 flex items-center space-x-4">
+            <div className="fixed bottom-10 right-10 flex items-center space-x-4 z-30">
               {/* Contact Us 버튼 */}
               <button
                   onClick={() => window.location.href = 'mailto:ghehf51@naver.com'}
