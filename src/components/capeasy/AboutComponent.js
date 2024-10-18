@@ -1,202 +1,172 @@
-import React from 'react';
-import { useInView } from "react-intersection-observer";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 const AboutComponent = () => {
+    const [selected, setSelected] = useState('Tech');
+    const refs = {
+        Tech: useRef(null),
+        TechImage: useRef(null),
+        Design: useRef(null),
+        DesignImage: useRef(null),
+    };
 
-    const { ref: aboutSloganRef, inView: aboutSloganInView } = useInView({
-        triggerOnce: true,
-        threshold: 0.1,
-    });
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const section = Object.keys(refs).find(
+                            (key) => refs[key].current === entry.target
+                        );
+                        if (section) setSelected(section);
+                    }
+                });
+            },
+            { threshold: 0.5 }
+        );
 
-    const { ref: sloganRef1, inView: sloganInView1 } = useInView({
-        triggerOnce: true,
-        threshold: 0.1,
-    });
+        // 요소가 존재할 때만 observe 호출
+        Object.values(refs).forEach((ref) => {
+            if (ref.current) observer.observe(ref.current);
+        });
 
-    const { ref: sloganRef2, inView: sloganInView2 } = useInView({
-        triggerOnce: true,
-        threshold: 0.1,
-    });
+        return () => observer.disconnect();
+    }, []);
+
+    const variants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 },
+    };
 
     return (
-        <div className="min-h-screen bg-white mt-24 relative">
-            {/* Background Image with Gradient */}
-            <div className="absolute inset-0 -mt-5 bg-cover bg-center bg-about-image opacity-50">
-                <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-transparent"></div>
-            </div>
+        <div className="relative bg-white select-none">
+            <div className="container relative mx-auto px-4 py-10 z-10 flex flex-col items-center">
+                <div className="w-full flex flex-col md:flex-row items-start justify-center">
 
-            <div className="container mx-auto px-4 sm:px-6 text-start relative z-20 mt-32 sm:mt-64">
-                <motion.h1
-                    ref={aboutSloganRef}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{
-                        opacity: aboutSloganInView ? 1 : 0,
-                        y: aboutSloganInView ? 0 : 20,
-                    }}
-                    transition={{ duration: 2 }}
-                    className="text-5xl sm:text-6xl font-extrabold mt-10 sm:mt-20 sm:text-start text-center">
-                    WHY CAPEASY
-                </motion.h1>
-            </div>
+                    {/* Content Section */}
+                    <div className="flex-grow text-center">
+                        <div ref={refs.Tech} className="h-screen flex items-center justify-center px-4 md:px-0">
+                            <motion.div
+                                initial="hidden"
+                                animate={selected === 'Tech' ? 'visible' : 'hidden'}
+                                variants={variants}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <h1 className="text-3xl font-extrabold text-green-700 mb-2">IMAGE STITCHING</h1>
+                                <h2 className="text-3xl sm:text-xl md:text-5xl lg:text-5xl font-semibold mb-4">
+                                    공간 이미지를 제작하는 기술, 한계를 뛰어넘다.
+                                </h2>
+                            </motion.div>
+                        </div>
 
-            {/* Content */}
-            <div className="relative container mx-auto px-4 py-10 sm:py-16 z-10 mt-16 sm:mt-0">
-                <div className="flex flex-col md:flex-row items-center">
-                    {/* Left Section */}
-                    <div className="md:w-1/2 w-full text-center md:text-left mb-8 md:mb-0">
-                        <motion.h1
-                            ref={sloganRef1}
-                            className="text-xl sm:text-2xl font-extrabold text-green-700 mb-2"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView1 ? 1 : 0,
-                                y: sloganInView1 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            기술
-                        </motion.h1>
-                        <motion.h1
-                            ref={sloganRef1}
-                            className="text-xl sm:text-3xl font-semibold mb-4"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView1 ? 1 : 0,
-                                y: sloganInView1 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            독자적으로 개발한 SRCNN 필터 기술
-                        </motion.h1>
-                        <motion.p
-                            ref={sloganRef1}
-                            className="text-xs sm:text-2xl sm:mt-6 leading-relaxed"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView1 ? 1 : 0,
-                                y: sloganInView1 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            Capeasy는 저희만의 초해상화 공간 이미지를 제작해드립니다.
-                        </motion.p>
-                    </div>
+                        <div ref={refs.TechImage} className="md:h-screen relative flex items-center justify-center">
+                            <motion.div
+                                initial="hidden"
+                                animate={selected === 'TechImage' || selected === 'Design' ? 'visible' : 'hidden'}
+                                variants={variants}
+                                transition={{ duration: 1.5 }}
+                                className="w-full h-full rounded-lg overflow-hidden"
+                            >
+                                <div className="relative bg-white select-none py-10">
+                                    {/* 배경 이미지 */}
+                                    <div className="absolute inset-0 bg-cover bg-center bg-about-image opacity-80 -z-10" />
 
-                    {/* Right Section - Full Image Display */}
-                    <div className="md:w-1/2 w-full">
-                        <motion.div
-                            ref={sloganRef1}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView1 ? 1 : 0,
-                                y: sloganInView1 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            <div className="w-full h-64 sm:h-80 rounded-lg shadow-lg overflow-hidden">
-                                <div className="bg-filter-image bg-[length:380px_260px] sm:bg-cover bg-center w-full h-full object-contain"></div>
-                            </div>
-                        </motion.div>
-                        <motion.p
-                            ref={sloganRef1}
-                            className="text-xs sm:text-lg font-extrabold mt-3 leading-relaxed items-center text-center"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView1 ? 1 : 0,
-                                y: sloganInView1 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            SRCNN 기반의 자체 개발한 모델(SRCNN-PANO)의 구조와
-                        </motion.p>
-                        <motion.p
-                            ref={sloganRef1}
-                            className="text-xs sm:text-lg font-extrabold leading-relaxed items-center text-center"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView1 ? 1 : 0,
-                                y: sloganInView1 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            사용된 프로세서 및 운영체제 버전(좌), 학습 모델 추론 영상 품질 성능평가(우)
-                        </motion.p>
-                    </div>
+                                    {/* 콘텐츠와 배경을 감싸는 그리드 */}
+                                    <div className="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                                        {/* 이미지 영역 */}
+                                        <div className="relative flex justify-center items-center">
+                                            <div className="relative w-full h-64 md:h-[28rem] rounded-lg bg-capture-image bg-contain bg-no-repeat bg-center"></div>
 
-                </div>
-            </div>
+                                        </div>
 
-            {/* Second Section with additional feature descriptions */}
-            <div className="relative container mx-auto px-4 py-10 sm:py-16 z-10">
-                <div className="flex flex-col md:flex-row items-center">
-                    {/* Left Section */}
-                    <div className="md:w-1/2 w-full text-center md:text-left mb-8 md:mb-0">
-                        <motion.h1
-                            ref={sloganRef2}
-                            className="text-xl sm:text-2xl font-extrabold text-green-700 mb-2"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView2 ? 1 : 0,
-                                y: sloganInView2 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            경쟁력
-                        </motion.h1>
-                        <motion.h1
-                            ref={sloganRef2}
-                            className="text-xl sm:text-3xl font-semibold mb-4"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView2 ? 1 : 0,
-                                y: sloganInView2 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            동영상 하나로 만드는 공간 이미지 스티칭
-                        </motion.h1>
-                        <motion.p
-                            ref={sloganRef2}
-                            className="text-xs sm:text-2xl sm:mt-6 leading-relaxed"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView2 ? 1 : 0,
-                                y: sloganInView2 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            별도의 장비를 구매 할 필요 없이
-                        </motion.p>
-                        <motion.p
-                            ref={sloganRef2}
-                            className="text-xs sm:text-2xl sm:mb-6 leading-relaxed"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView2 ? 1 : 0,
-                                y: sloganInView2 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            핸드폰으로 촬영한 영상을 이용하여 손쉽게 제작이 가능합니다.
-                        </motion.p>
-                    </div>
 
-                    {/* Right Section */}
-                    <div className="md:w-1/2 w-full">
-                        <motion.div
-                            ref={sloganRef2}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView2 ? 1 : 0,
-                                y: sloganInView2 ? 0 : 20,
-                            }}
-                            transition={{ duration: 2 }}
-                        >
-                            <div className="w-full h-64 sm:h-80 rounded-lg shadow-lg overflow-hidden">
-                                <div className="bg-capture-image w-full h-full object-cover object-center"></div>
-                            </div>
-                        </motion.div>
+                                        {/* 텍스트 설명 영역 */}
+                                        <div className="flex flex-col justify-center space-y-6 overflow-y-auto">
+                                            <h1 className="text-3xl font-bold text-green-700">
+                                                IMAGE STITCHING
+                                            </h1>
+                                            <p className="text-lg font-semibold leading-relaxed break-words">
+                                                이미지 스티칭은 두 이미지의 공통된 특징점을 찾아 이어붙이는 기술입니다.
+                                            </p>
+                                            <p className="text-lg font-semibold leading-relaxed break-words">
+                                                기존 스티칭 기술은 왜곡 문제로 인한 정교한 촬영을 요구하는 한계가 존재했습니다.
+                                            </p>
+                                            <p className="text-lg font-semibold leading-relaxed break-words">
+                                                Capeasy는 영상에서 프레임을 추출해 자연스러운 이미지를 형성하고,
+                                                SRCNN-PANO를 사용해 스티칭의 한계를 극복합니다.
+                                            </p>
+                                            <p className="text-sm text-gray-500 mt-2">
+                                                출처: <a
+                                                    href="http://viplab.fudan.edu.cn/vip/attachments/download/1992/Automatic_Panoramic_Image_Stitching_using_Invariant_Features.pdf"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="underline hover:text-gray-700"
+                                                >
+                                                    Automatic Panoramic Image Stitching using Invariant Features
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+
+                        <div ref={refs.Design} className="h-screen flex items-center justify-center">
+                            <motion.div
+                                initial="hidden"
+                                animate={selected === 'Design' ? 'visible' : 'hidden'}
+                                variants={variants}
+                                transition={{ duration: 1.5 }}
+                            >
+                                <h1 className="text-3xl font-extrabold text-green-700 mb-2">SRCNN-PANO</h1>
+                                <h2 className="text-3xl sm:text-xl md:text-5xl lg:text-5xl font-semibold mb-4">
+                                    CAPEASY만의 독자적 초해상화 기술
+                                </h2>
+                            </motion.div>
+                        </div>
+
+                        <div ref={refs.DesignImage} className="md:h-screen relative flex items-center justify-center">
+                            <motion.div
+                                initial="hidden"
+                                animate={selected === 'DesignImage' ? 'visible' : 'hidden'}
+                                variants={variants}
+                                transition={{ duration: 1.5 }}
+                                className="w-full h-full rounded-lg overflow-hidden"
+                            >
+                                <div className="relative bg-white select-none py-10">
+                                    {/* 배경 이미지 */}
+                                    <div className="absolute inset-0 bg-cover bg-center bg-about-image opacity-80 -z-10" />
+
+                                    {/* 콘텐츠와 배경을 감싸는 그리드 */}
+                                    <div className="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+
+                                        {/* 이미지 영역, 모바일에서는 위에 보이게 설정 */}
+                                        <div className="relative flex justify-center items-center order-first md:order-none">
+                                            <div className="relative w-full h-64 md:h-[28rem] rounded-lg bg-filter-image bg-contain bg-no-repeat bg-center"></div>
+                                        </div>
+
+                                        {/* 텍스트 설명 영역 */}
+                                        <div className="flex flex-col justify-center space-y-6 overflow-y-auto">
+                                            <h1 className="text-3xl font-bold text-green-700">
+                                                SRCNN-PANO
+                                            </h1>
+                                            <p className="text-lg font-semibold leading-relaxed break-words">
+                                                Capeasy는 기존 AI 초해상화 기술인 SRCNN을 개선한 SRCNN-PANO를 사용합니다.
+                                            </p>
+                                            <p className="text-lg font-semibold leading-relaxed break-words">
+                                                프레임들은 SRCNN-PANO 필터를 거쳐 더 선명한 이미지를 생성합니다.
+                                            </p>
+                                            <button
+                                                className="w-40 py-2 px-4 bg-green-500 text-white rounded-full hover:bg-green-600 transition self-center"
+                                            >
+                                                자세히 보기
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+
                     </div>
                 </div>
             </div>
