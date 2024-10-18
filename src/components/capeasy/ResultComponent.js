@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
 import "@egjs/react-view360/css/view360.min.css";
-import { getImage } from '../../api/videoApi';
+import { getImage } from '../../api/imageApi';
 import confetti from "canvas-confetti";
 import useCustomMove from '../../hooks/useCustomMove';
 import WriteModal from '../common/WriteModal';

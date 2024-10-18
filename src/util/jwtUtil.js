@@ -1,16 +1,16 @@
 import axios from "axios";
 import { getCookie, setCookie } from "./cookieUtil";
-import { API_SERVER_HOST } from "../api/memberApi";
+import host from "../api/apiConfig";
 
 const jwtAxios = axios.create()
 
 const refreshJWT = async (accessToken, refreshToken) => {
 
-    const host = API_SERVER_HOST
+    const prefix = host
 
     const header = { headers: { "Authorization": `Bearer ${accessToken}` } }
 
-    const res = await axios.get(`${host}/api/member/refresh?refreshToken=${refreshToken}`, header)
+    const res = await axios.get(`${prefix}/member/refresh?refreshToken=${refreshToken}`, header)
 
     console.log("Refresh token..............")
 

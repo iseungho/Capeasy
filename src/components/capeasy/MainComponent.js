@@ -51,8 +51,8 @@ function MainComponent(props) {
 
 
                 <div className="container mx-auto px-6 text-center relative z-20">
-                    <h1 className="text-7xl font-bold mb-4">언제든, 누구든, 그리고</h1>
-                    <p className="text-xl mb-10">
+                    <h1 className="text-4xl font-bold mb-4 md:text-7xl">언제든, 누구든, 그리고</h1>
+                    <p className="text-lg mb-10 md:text-xl">
                         어디든. 당신의 추억을 생생하게 기록하세요.
                     </p>
                     <button
@@ -73,7 +73,7 @@ function MainComponent(props) {
                         className="md:w-1/2 w-full flex flex-col items-center md:items-start text-center md:text-center mb-8 md:mb-0">
                         <motion.h1
                             ref={sloganRef1}
-                            className="text-4xl font-bold mb-4 md:ml-12"
+                            className="text-2xl font-bold mb-4 md:ml-12 md:text-4xl"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{
                                 opacity: sloganInView1 ? 1 : 0,
@@ -133,7 +133,7 @@ function MainComponent(props) {
                     <div className="md:w-1/2 w-full flex flex-col items-center md:items-center text-center md:text-right mb-8 md:mb-0">
                         <motion.h1
                             ref={sloganRef2}
-                            className="text-4xl font-bold m-4"
+                            className="text-2xl font-bold mt-4 md:text-4xl"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{
                                 opacity: sloganInView2 ? 1 : 0,
@@ -163,7 +163,7 @@ function MainComponent(props) {
 
             <section className="container mx-auto px-6 py-20">
                 <h2 className="text-3xl font-bold text-center mb-12">
-                    우리는 모두 친구 종합 선물 세트
+                    Developer
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12" onClick={() => {
                     window.open('https://github.com/WellshCorgi', '_blank');

@@ -1,9 +1,8 @@
 import jwtAxios from "../util/jwtUtil";
 import axios from "axios";
+import API_SERVER_HOST from './apiConfig'
 
-export const API_SERVER_HOST = 'http://localhost:8080';
-
-const prefix = `${API_SERVER_HOST}/api/boards`;
+const prefix = `${API_SERVER_HOST}/boards`;
 
 export const postBoard = async (boardData) => {
     

@@ -1,9 +1,8 @@
-import jwtAxios from "../util/jwtUtil";
 import axios from "axios";
+import jwtAxios from "../util/jwtUtil";
+import API_SERVER_HOST from './apiConfig'
 
-export const API_SERVER_HOST = 'http://localhost:8080';
-
-const prefix = `${API_SERVER_HOST}/api/replies`;
+const prefix = `${API_SERVER_HOST}/replies`;
 
 export const postReply = async (replyData) => {
     const formData = new FormData();

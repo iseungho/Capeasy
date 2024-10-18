@@ -1,8 +1,8 @@
 import axios from 'axios';
 import jwtAxios from "../util/jwtUtil"
+import API_SERVER_HOST from './apiConfig'
 
-export const API_SERVER_HOST = 'http://localhost:8080'
-const host = `${API_SERVER_HOST}/api/member`
+const prefix = `${API_SERVER_HOST}/member`
 
 export const loginPost = async (loginParam) => {
 
@@ -16,13 +16,13 @@ export const loginPost = async (loginParam) => {
     form.append('username', loginParam.email)
     form.append('password', loginParam.password)
 
-    const res = await axios.post(`${host}/login`, form, header)
+    const res = await axios.post(`${prefix}/login`, form, header)
 
     return res.data
 }
 
 export const getMember = async(mno) => {
-        const res = await axios.get(`${host}/${mno}`);
+        const res = await axios.get(`${prefix}/${mno}`);
     return res.data;
 }
 
@@ -33,7 +33,7 @@ export const signupMember = async (member) => {
         }
     }
 
-    const res = await axios.post(`${host}/`, member, header);
+    const res = await axios.post(`${prefix}/`, member, header);
     return res.data;
 }
 
@@ -41,7 +41,7 @@ export const modifyMember = async (member, mno) => {
     if (!mno) {
         throw new Error("Member number (mno) is required");
     }
-    const res = await jwtAxios.put(`${host}/${mno}`, member);
+    const res = await jwtAxios.put(`${prefix}/${mno}`, member);
     return res.data;
 }
 
@@ -58,7 +58,7 @@ export const checkPassword = async (member) => {
         password: member.password
     }
 
-    const res = await jwtAxios.post(`${host}/check/password`, body, header)
+    const res = await jwtAxios.post(`${prefix}/check/password`, body, header)
 
     return res.data
 }
@@ -67,6 +67,6 @@ export const removeMember = async (mno) => {
     if (!mno) {
         throw new Error("Member number (mno) is required");
     }
-    const res = await jwtAxios.delete(`${host}/${mno}`);
+    const res = await jwtAxios.delete(`${prefix}/${mno}`);
     return res.data;
 }

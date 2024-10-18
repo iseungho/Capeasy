@@ -1,9 +1,8 @@
 import jwtAxios from "../util/jwtUtil";
 import axios from "axios";
+import API_SERVER_HOST from './apiConfig'
 
-export const API_SERVER_HOST = 'http://localhost:8080';
-
-const prefix = `${API_SERVER_HOST}/api`;
+const prefix = `${API_SERVER_HOST}/images`;
 
 export const postImage = async (image, uno) => {
     const formData = new FormData();
@@ -24,13 +23,13 @@ export const postImage = async (image, uno) => {
 };
 
 export const getImage = async (ino) => {
-    const res = await axios.get(`${prefix}/images/view/${ino}`);
+    const res = await axios.get(`${prefix}/view/${ino}`);
     return res.data;
 
 };
 
 export const getThumbnail = async (ino) => {
     console.log("getThumbnail success")
-    const res = await axios.get(`${prefix}/images/view/thumbnail/${ino}`);
+    const res = await axios.get(`${prefix}/view/thumbnail/${ino}`);
     return res.data;
 };
