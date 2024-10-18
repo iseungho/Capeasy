@@ -28,7 +28,6 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
     // Fetch board data when modal opens
     useEffect(() => {
         const fetchBoardData = async () => {
-            if (!isOpen) return;
             setFetching(true);
             try {
                 const boardData = await getBoard(bno);
@@ -144,7 +143,9 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 content: newComment,
             });
             setNewComment("");
-            setRefresh(!refresh);
+            setTimeout(() => {
+                setRefresh(!refresh);
+            }, 200);
         }
     };
 
@@ -218,9 +219,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 <div className="flex-1 flex flex-col md:w-5/6">
 
                     {/* 게시글 데이터 렌더링 */}
-                    {fetching ? (
-                        <p className="mb-4 text-center text-gray-500">게시글 로딩 중...</p>
-                    ) : projection ? (
+                    {projection ? (
                         <View360
                             className="is-16by9"
                             autoplay={true}
