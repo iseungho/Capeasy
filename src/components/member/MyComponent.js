@@ -155,12 +155,14 @@ const MyComponent = ({mno}) => {
                             <p className="text-gray-600">{memberData?.email}</p>
                         </div>
                     </div>
+                    {mno === loginState.mno && (
                     <button
                         className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-600 transition-colors"
                         onClick={moveToModify}
                     >
                         회원정보 수정
                     </button>
+                )}
                 </div>
 
                 {/* Board List */}
