@@ -7,7 +7,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     const [loginParam, setLoginParam] = useState({ email: '', password: '', keepLoggedIn: false });
     const [signupParam, setSignupParam] = useState({ email: '', password: '', nickname: '', role: 'USER' });
     const [errors, setErrors] = useState({ email: '', password: '' });
-    const { doLogin, moveToPath } = useCustomLogin();
+    const { doLogin } = useCustomLogin();
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
     const passwordRegEx = /^[A-Za-z0-9]{8,20}$/;
@@ -88,6 +88,13 @@ const LoginModal = ({ isOpen, onClose }) => {
         return isValid;
     };
 
+    // 입력 필드 초기화 함수
+    const refreshFields = () => {
+        setLoginParam({ email: '', password: '', keepLoggedIn: false }); // 로그인 폼 초기화
+        setSignupParam({ email: '', password: '', nickname: '', role: 'USER' }); // 회원가입 폼 초기화
+        setErrors({ email: '', password: '', nickname: '' }); // 에러 메시지 초기화
+    };
+
     // 로그인 버튼 클릭 핸들러
     const handleClickLogin = () => {
         if (!validateLogin()) {
@@ -102,7 +109,8 @@ const LoginModal = ({ isOpen, onClose }) => {
                 });
             } else {
                 alert("다시 오셨군요! 환영합니다.");
-                moveToPath('/');
+                // 로그인 후 입력란 초기화
+                refreshFields();
                 onClose();
             }
         });
@@ -117,6 +125,8 @@ const LoginModal = ({ isOpen, onClose }) => {
         try {
             await signupMember(signupParam);
             alert('회원가입이 완료되었습니다. 로그인해주세요.');
+            // 회원가입 후 입력란 초기화
+            refreshFields();
             setIsLogin(true); // 회원가입 후 로그인 화면으로 돌아가기
         } catch (error) {
             setErrors({
@@ -131,9 +141,7 @@ const LoginModal = ({ isOpen, onClose }) => {
         if (window.confirm("진행상황이 저장되지 않습니다. 정말로 닫으시겠습니까?")) {
             // 상태 초기화
             setIsLogin(true); // 로그인 상태로 돌아가기
-            setLoginParam({ email: '', password: '', keepLoggedIn: false }); // 로그인 폼 초기화
-            setSignupParam({ email: '', password: '', nickname: '', role: 'USER'}); // 회원가입 폼 초기화
-            setErrors({ email: '', password: '', nickname: '' }); // 에러 메시지 초기화
+            refreshFields(); // 입력란 초기화
             onClose();
         }
     };
