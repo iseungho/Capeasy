@@ -1,8 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import ModifyModal from "../common/ModifyModal";
-import LoginModal from "../member/LoginModal";
 import PageComponent from "../common/PageComponent";
 import { deleteBoard, getBoardListByMno } from "../../api/boardApi";
 import { getThumbnail } from "../../api/imageApi";
@@ -30,9 +28,7 @@ const MyComponent = ({mno}) => {
     const { moveToModify } = useCustomLogin();
     const [myBoardList, setMyBoardList] = useState(myBoardListInitState);
     const [fetching, setFetching] = useState(false);
-    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isBoardModalOpen, setIsBoardModalOpen] = useState(null);
-    const navigate = useNavigate();
     const [imageMap, setImageMap] = useState({});
     const [memberData, setMemberData] = useState(null);
 
@@ -107,17 +103,8 @@ const MyComponent = ({mno}) => {
         fetchBoardAndImages();
     }, [memberData, page, size, refresh, loadThumbnail]);
 
-    const moveMain = useCallback(() => {
-        navigate('/');
-    }, [navigate]);
-
     const openBoardModal = (bno) => {
         setIsBoardModalOpen(isBoardModalOpen === bno ? null : bno);
-    };
-
-    const closeLoginModal = () => {
-        setIsLoginModalOpen(false);
-        moveMain();
     };
 
     const handleBoardInfoModalOpen = (bno) => {
@@ -207,8 +194,6 @@ const MyComponent = ({mno}) => {
                 </div>
 
                 <PageComponent serverData={myBoardList} movePage={moveToMyPage} />
-
-                <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
 
                 <BoardModal
                     isOpen={isBoardModalOpen !== null}
