@@ -9,7 +9,7 @@ const WriteModal = ({ isOpen, onClose, ino }) => {
   const [isBoardModalOpen, setIsBoardModalOpen] = useState(false); // BoardModal을 제어하는 상태
   const [newBoardNo, setNewBoardNo] = useState(null); // 새로 작성된 게시글 번호를 저장할 상태
 
-  const { loginState } = useCustomLogin(); // 로그인 상태 정보
+  const { loginState } = useCustomLogin();
 
   if (!isOpen) return null; // 모달이 열리지 않은 상태에서는 렌더링하지 않음
 
