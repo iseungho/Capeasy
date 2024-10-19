@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { postBoard } from "../../api/boardApi"; // 게시글 API 호출
 import useCustomLogin from "../../hooks/useCustomLogin"; // 로그인 상태 훅
-import BoardModal from '../board/BoardModal'; // BoardModal을 가져옵니다
 
 const WriteModal = ({ isOpen, onClose, ino }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [isBoardModalOpen, setIsBoardModalOpen] = useState(false); // BoardModal을 제어하는 상태
-  const [newBoardNo, setNewBoardNo] = useState(null); // 새로 작성된 게시글 번호를 저장할 상태
 
   const { loginState } = useCustomLogin();
 
@@ -18,40 +15,33 @@ const WriteModal = ({ isOpen, onClose, ino }) => {
       alert("제목과 내용을 입력해주세요.");
       return;
     }
-    else{
-      alert("작성이 완료되었습니다! 마이페이지에서 확인해주세요.");
-
-    }
-
-    // 작성된 데이터를 업데이트
-    const newBoardData = {
-      title,
-      content,
-      ino, // 이미지 번호
-      writerId: loginState.mno, // 작성자 ID (로그인된 사용자 정보에서 가져옴)
-      writerEmail: loginState.email, // 작성자 이메일
-      writerNickname: loginState.nickname // 작성자 닉네임
-    };
 
     try {
       // 서버에 게시글 데이터를 보내기
-      const postedBoard = await postBoard(newBoardData);
-
-      // 작성된 게시글 번호 저장
-      setNewBoardNo(postedBoard.bno);
-
+      postBoard({
+        title,
+        content,
+        ino, // 이미지 번호
+        writerId: loginState.mno, // 작성자 ID (로그인된 사용자 정보에서 가져옴)
+        writerEmail: loginState.email, // 작성자 이메일
+        writerNickname: loginState.nickname // 작성자 닉네임
+      })
+      .then((result) => {
+        if (result.error) {
+          alert(`게시글 작성 중 오류가 발생했습니다: ${result.error.error}`);
+        } else {
+          alert("작성이 완료되었습니다! 마이페이지에서 확인해주세요.");
+        }
+      });
+  
       // 제출 후 상태 초기화
       setTitle("");
       setContent("");
-
-      // BoardModal을 열기 위한 상태 업데이트
-      setIsBoardModalOpen(true);
-
+  
       // WriteModal 닫기
       onClose();
     } catch (error) {
-      console.error("Error posting board:", error);
-      alert("게시글 작성 중 오류가 발생했습니다.");
+      alert(`${error.message}로 인해 실패했습니다. 다시 시도해주세요!`);
     }
   };
 
@@ -65,13 +55,6 @@ const WriteModal = ({ isOpen, onClose, ino }) => {
 
   return (
       <>
-        {isBoardModalOpen && (
-            <BoardModal
-                isOpen={isBoardModalOpen}
-                onClose={() => setIsBoardModalOpen(false)}
-                bno={newBoardNo} // 새로 작성된 게시글 번호 전달
-            />
-        )}
 
         <div
             className="fixed inset-0 left-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"

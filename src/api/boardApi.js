@@ -5,7 +5,6 @@ import API_SERVER_HOST from "./apiConfig";
 const prefix = `${API_SERVER_HOST}/boards`;
 
 export const postBoard = async (boardData) => {
-    
     const formData = new FormData();
     formData.append('title', boardData.title); 
     formData.append('content', boardData.content);
@@ -22,8 +21,7 @@ export const postBoard = async (boardData) => {
         });
         return res.data;
     } catch (error) {
-        console.error('Error creating post:', error);
-        throw error;
+        return { error: error.response ? error.response.data : error.message };
     }
 };
 
