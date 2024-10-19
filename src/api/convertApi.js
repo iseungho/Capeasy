@@ -1,5 +1,5 @@
 import jwtAxios from "../util/jwtUtil";
-import API_SERVER_HOST from './apiConfig'
+import API_SERVER_HOST from "./apiConfig";
 
 const prefix = `${API_SERVER_HOST}/convert`;
 
