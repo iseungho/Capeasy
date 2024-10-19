@@ -28,6 +28,8 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
     // Fetch board data when modal opens
     useEffect(() => {
         const fetchBoardData = async () => {
+            if (!bno) return; // bno가 null 또는 undefined인 경우 함수 종료
+
             setFetching(true);
             try {
                 const boardData = await getBoard(bno);
@@ -41,6 +43,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
 
         fetchBoardData();
     }, [isOpen, bno, refresh]);
+
 
     useEffect(() => {
         if (isOpen) {
