@@ -19,12 +19,27 @@ function MainComponent(props) {
         }
     }, [loginState.email, moveToCreate]);
 
-    const { ref: sloganRef1, inView: sloganInView1 } = useInView({
+    const { ref: howto1, inView: howtoInView1 } = useInView({
         triggerOnce: true,
         threshold: 0.1,
     });
 
-    const { ref: sloganRef2, inView: sloganInView2 } = useInView({
+    const { ref: howto2, inView: howtoInView2 } = useInView({
+        triggerOnce: true,
+        threshold: 0.1,
+    });
+
+    const { ref: introduce1, inView: introduceInView1 } = useInView({
+        triggerOnce: true,
+        threshold: 0.1,
+    });
+
+    const { ref: introduce2, inView: introduceInView2 } = useInView({
+        triggerOnce: true,
+        threshold: 0.1,
+    });
+
+    const { ref: introduce3, inView: introduceInView3 } = useInView({
         triggerOnce: true,
         threshold: 0.1,
     });
@@ -66,97 +81,65 @@ function MainComponent(props) {
             {/* 로그인 모달 추가 */}
             <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-            <div className="bg-gray-100 h-[80vh] flex items-center">
-                <div className="container mx-auto px-6 py-12 flex flex-col md:flex-row items-center">
-                    {/* 좌측 섹션 */}
-                    <div
-                        className="md:w-1/2 w-full flex flex-col items-center md:items-start text-center md:text-center mb-8 md:mb-0">
-                        <motion.h1
-                            ref={sloganRef1}
-                            className="text-2xl font-bold mb-4 md:ml-12 md:text-4xl"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView1 ? 1 : 0,
-                                y: sloganInView1 ? 0 : 20,
-                            }}
-                            transition={{ duration: 0.8 }}
-                        >
-                            손쉽게 여행의 추억을 간직하세요
-                        </motion.h1>
-                        <motion.p
-                            ref={sloganRef1}
-                            className="text-gray-700 font-bold mb-4 md:ml-12"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{
-                                opacity: sloganInView1 ? 1 : 0,
-                                y: sloganInView1 ? 0 : 20,
-                            }}
-                            transition={{ duration: 0.8 }}
-                        >
-                            단 한 번의 촬영으로 여행지에서의 추억을 고스란히 남길 수 있습니다.
-                        </motion.p>
-                    </div>
+            <div className="w-full h-auto flex items-center">
+                <div className="w-full flex items-center">
+                    <div className="w-screen">
 
-                    {/* 우측 섹션 */}
-                    <div className="md:w-1/2 w-full">
                         <motion.div
-                            ref={sloganRef1}
-                            className="bg-main-slogan-1 w-full h-96 rounded-lg shadow bg-cover"
-                            initial={{ opacity: 0, y: 20 }}
+                            ref={howto1}
+                            className="w-full h-auto aspect-[3841/3830] bg-howto1-image bg-cover bg-center"
+                            initial={{opacity: 0, y: 20}}
                             animate={{
-                                opacity: sloganInView1 ? 1 : 0,
-                                y: sloganInView1 ? 0 : 20,
+                                opacity: howtoInView1 ? 1 : 0,
+                                y: howtoInView1 ? 0 : 20,
                             }}
-                            transition={{ duration: 0.8 }}
+                            transition={{duration: 1}}
                         />
-                    </div>
-                </div>
-            </div>
 
-            <div className="bg-gray-100 h-[80vh] flex items-center">
-                <div className="container mx-auto px-6 py-12 flex flex-col md:flex-row items-center ">
-                    {/* 좌측 섹션 */}
-                    <div className="md:w-1/2 w-full">
                         <motion.div
-                            ref={sloganRef2}
-                            className="bg-main-slogan-2 w-full h-96 rounded-lg shadow bg-cover"
-                            initial={{ opacity: 0, y: 20 }}
+                            ref={howto2}
+                            className="w-full h-auto aspect-[3841/3145] bg-howto2-image bg-cover bg-center"
+                            initial={{opacity: 0, y: 20}}
                             animate={{
-                                opacity: sloganInView2 ? 1 : 0,
-                                y: sloganInView2 ? 0 : 20,
+                                opacity: howtoInView2 ? 1 : 0,
+                                y: howtoInView2 ? 0 : 20,
                             }}
-                            transition={{ duration: 0.8 }}
+                            transition={{duration: 1}}
                         />
-                    </div>
 
-                    {/* 우측 섹션 */}
-                    <div className="md:w-1/2 w-full flex flex-col items-center md:items-center text-center md:text-right mb-8 md:mb-0">
-                        <motion.h1
-                            ref={sloganRef2}
-                            className="text-2xl font-bold mt-4 md:text-4xl"
-                            initial={{ opacity: 0, y: 20 }}
+                        <motion.div
+                            ref={introduce1}
+                            className="w-full h-auto aspect-[3841/3588] bg-introduce1-image bg-cover bg-center"
+                            initial={{opacity: 0, y: 20}}
                             animate={{
-                                opacity: sloganInView2 ? 1 : 0,
-                                y: sloganInView2 ? 0 : 20,
+                                opacity: introduceInView1 ? 1 : 0,
+                                y: introduceInView1 ? 0 : 20,
                             }}
-                            transition={{ duration: 0.8 }}
-                        >
-                            개선된 이미지로 추억을 보다 선명하게
-                        </motion.h1>
+                            transition={{duration: 1}}
+                        />
 
-                        <motion.p
-                            ref={sloganRef2}
-                            className="text-gray-700 font-bold mb-4"
-                            initial={{ opacity: 0, y: 20 }}
+                        <motion.div
+                            ref={introduce2}
+                            className="w-full h-auto aspect-[3841/2709] bg-introduce2-image bg-cover bg-center"
+                            initial={{opacity: 0, y: 20}}
                             animate={{
-                                opacity: sloganInView2 ? 1 : 0,
-                                y: sloganInView2 ? 0 : 20,
+                                opacity: introduceInView2 ? 1 : 0,
+                                y: introduceInView2 ? 0 : 20,
                             }}
-                            transition={{ duration: 0.8 }}
-                        >
-                            CapEasy만의 화질개선 기능으로 보다 더 아름다운 그 시절의 장면을
-                            재현해 드립니다.
-                        </motion.p>
+                            transition={{duration: 1}}
+                        />
+
+                        <motion.div
+                            ref={introduce3}
+                            className="w-full h-auto aspect-[3841/4759] bg-introduce3-image bg-cover bg-center"
+                            initial={{opacity: 0, y: 20}}
+                            animate={{
+                                opacity: introduceInView3 ? 1 : 0,
+                                y: introduceInView3 ? 0 : 20,
+                            }}
+                            transition={{duration: 1}}
+                        />
+
                     </div>
                 </div>
             </div>
