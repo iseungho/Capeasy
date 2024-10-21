@@ -21,29 +21,28 @@ function MainComponent(props) {
 
     const { ref: howto1, inView: howtoInView1 } = useInView({
         triggerOnce: true,
-        threshold: 0.1,
+        threshold: 0.2,
     });
 
     const { ref: howto2, inView: howtoInView2 } = useInView({
         triggerOnce: true,
-        threshold: 0.1,
+        threshold: 0.2,
     });
 
     const { ref: introduce1, inView: introduceInView1 } = useInView({
         triggerOnce: true,
-        threshold: 0.1,
+        threshold: 0.2,
     });
 
     const { ref: introduce2, inView: introduceInView2 } = useInView({
         triggerOnce: true,
-        threshold: 0.1,
+        threshold: 0.2,
     });
 
     const { ref: introduce3, inView: introduceInView3 } = useInView({
         triggerOnce: true,
-        threshold: 0.1,
+        threshold: 0.2,
     });
-    // 스크롤 시 버튼을 보이게 하는 로직
 
 
     return (
@@ -93,7 +92,7 @@ function MainComponent(props) {
                                 opacity: howtoInView1 ? 1 : 0,
                                 y: howtoInView1 ? 0 : 20,
                             }}
-                            transition={{duration: 1}}
+                            transition={{duration: 1.5}}
                         />
 
                         <motion.div
@@ -104,7 +103,7 @@ function MainComponent(props) {
                                 opacity: howtoInView2 ? 1 : 0,
                                 y: howtoInView2 ? 0 : 20,
                             }}
-                            transition={{duration: 1}}
+                            transition={{duration: 1.5}}
                         />
 
                         <motion.div
@@ -115,7 +114,7 @@ function MainComponent(props) {
                                 opacity: introduceInView1 ? 1 : 0,
                                 y: introduceInView1 ? 0 : 20,
                             }}
-                            transition={{duration: 1}}
+                            transition={{duration: 1.5}}
                         />
 
                         <motion.div
@@ -126,18 +125,18 @@ function MainComponent(props) {
                                 opacity: introduceInView2 ? 1 : 0,
                                 y: introduceInView2 ? 0 : 20,
                             }}
-                            transition={{duration: 1}}
+                            transition={{duration: 1.5}}
                         />
 
                         <motion.div
                             ref={introduce3}
-                            className="w-full h-auto aspect-[3841/4759] bg-introduce3-image bg-cover bg-center"
+                            className="w-full h-auto aspect-[3841/4112] bg-introduce3-image bg-cover bg-center"
                             initial={{opacity: 0, y: 20}}
                             animate={{
                                 opacity: introduceInView3 ? 1 : 0,
                                 y: introduceInView3 ? 0 : 20,
                             }}
-                            transition={{duration: 1}}
+                            transition={{duration: 1.5}}
                         />
 
                     </div>
