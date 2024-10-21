@@ -11,13 +11,11 @@ module.exports = {
         "filter-image": "url('./asset/images/filter.png')",
         "about-image": "url('./asset/backgrounds/background.jpg')",
         "capture-image": "url('./asset/images/capture.png')",
-        "main-slogan-1":
-          "url('https://ak.picdn.net/shutterstock/videos/1072316771/thumb/1.jpg')",
-        "main-slogan-2":
-          "url('https://cdn.naturettl.com/wp-content/uploads/2021/06/04110437/how-to-take-panoramas-of-the-night-sky-18-900x506.jpg')",
-        "kakao-sns": "url('./asset/icon/kakao.png')",
-        "naver-sns": "url('./asset/icon/naver.png')",
-
+        "howto1-image": "url('./asset/images/howto1.png')",
+        "howto2-image": "url('./asset/images/howto2.png')",
+        "introduce1-image": "url('./asset/images/introduce1.png')",
+        "introduce2-image": "url('./asset/images/introduce2.png')",
+        "introduce3-image": "url('./asset/images/introduce3.png')",
       },
     },
   },
