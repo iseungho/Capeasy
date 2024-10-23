@@ -4,10 +4,12 @@ import API_SERVER_HOST from "./apiConfig";
 
 const prefix = `${API_SERVER_HOST}/hearts`;
 
-export const postHearts = async (bno, memberId) => {
+export const postHeart = async (heartData) => {
     const formData = new FormData();
-    formData.append('bno', bno);
-    formData.append('memberId', memberId);
+    formData.append('bno', heartData.bno);
+    formData.append('memberId', heartData.memberId);
+    formData.append('memberEmail', heartData.memberEmail);
+
 
     try {
         const res = await jwtAxios.post(`${prefix}/`, formData, {

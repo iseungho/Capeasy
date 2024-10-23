@@ -9,6 +9,7 @@ export const postReply = async (replyData) => {
 
     formData.append('bno', replyData.bno);
     formData.append('replierId', replyData.replierId);
+    formData.append('replierEmail', replyData.replierEmail);
     formData.append('content', replyData.content);
 
     const res = await jwtAxios.post(`${prefix}/`, formData)

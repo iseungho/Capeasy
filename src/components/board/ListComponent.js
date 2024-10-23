@@ -5,7 +5,7 @@ import ModifyModal from "../common/ModifyModal";
 import { getBoardList, deleteBoard } from "../../api/boardApi";
 import LoginModal from "../../components/member/LoginModal";
 import { getThumbnail } from "../../api/imageApi";
-import { getHeartListByBno, postHearts, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
+import { getHeartListByBno, postHeart, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import PageComponent from "../common/PageComponent";
@@ -133,7 +133,11 @@ const ListComponent = () => {
 
         try {
             if (!likedBoards[bno]) {
-                await postHearts(bno, loginState.mno);
+                await postHeart({
+                    bno : bno,
+                    memberId: loginState.mno,
+                    memberEmail: loginState.email,
+                });
                 setLikedBoards((prevState) => ({
                     ...prevState,
                     [bno]: true,

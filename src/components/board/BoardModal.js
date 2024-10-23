@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState, useRef } from "react";
 import { getBoard } from "../../api/boardApi";
 import { postReply, getReplyByBno, putReply, deleteReply } from "../../api/replyApi";
-import { postHearts, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
+import { postHeart, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
 import { getImage } from "../../api/imageApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
@@ -143,6 +143,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
             postReply({
                 bno: bno,
                 replierId: loginState.mno,
+                replierEmail: loginState.email,
                 content: newComment,
             });
             setNewComment("");
@@ -160,7 +161,13 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
 
         try {
             if (!liked) {
-                await postHearts(bno, loginState.mno);
+                await postHeart({
+                    bno: bno,
+                    memberId: loginState.mno,
+                    memberEmail: loginState.email,
+                });
+
+
             } else {
                 const hno = await findHnoByMnoBno(loginState.mno, bno);
                 if (hno) {
