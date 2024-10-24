@@ -5,8 +5,11 @@ import useCustomLogin from "../../hooks/useCustomLogin";
 import LoginModal from "../member/LoginModal";
 import MemberInfoSidebar from "../common/MemberInfoSidebar";
 import useCustomMove from "../../hooks/useCustomMove";
+import { useAutoLogout } from "../../hooks/useAutoLogout"; // useAutoLogout 훅 가져오기
 
 const BasicMenu = ({ children }) => {
+  useAutoLogout(); // 자동 로그아웃 활성화
+
   const loginState = useSelector((state) => state.loginSlice);
   const { doLogout, moveToPath } = useCustomLogin();
   const { moveToMain, moveToAbout, moveToBoardList } = useCustomMove();
@@ -71,15 +74,15 @@ const BasicMenu = ({ children }) => {
           <div className="container mx-auto px-4 py-2 flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <div
-                  className="bg-logo-image bg-cover w-48 h-16 font-bold text-blue-500 cursor-pointer"
+                  className="bg-logo-image bg-cover w-36 h-12 md:w-48 md:h-16 font-bold text-blue-500 cursor-pointer"
                   onClick={moveToMain}
               ></div>
               <button className="text-gray-500 font-semibold text-xl hidden md:block" onClick={moveToBoardList}>
                 Community
               </button>
               <button className="text-gray-500 font-semibold text-xl hidden md:block" onClick={moveToAbout}>
-                    About
-                  </button>
+                About
+              </button>
             </div>
 
             {/* 모바일 메뉴 토글 */}
@@ -152,11 +155,11 @@ const BasicMenu = ({ children }) => {
             </>
         )}
         {showScrollButton && (
-            <div className="fixed bottom-10 right-10 flex items-center space-x-4 z-30">
+            <div className="fixed bottom-5 right-5 flex items-center space-x-2 z-30">
               {/* Contact Us 버튼 */}
               <button
                   onClick={() => window.location.href = 'mailto:ghehf51@naver.com'}
-                  className="bg-green-400 text-white px-6 py-3 rounded-full text-lg font-semibold
+                  className="bg-green-400 text-white px-3 py-3 md:text-xl  md:px-6 md:py-3 rounded-full text-sm font-semibold
                  hover:bg-green-500 shadow-lg transition-transform transform hover:scale-105"
               >
                 Contact Us
@@ -165,7 +168,7 @@ const BasicMenu = ({ children }) => {
               {/* 맨 위로 스크롤 버튼 */}
               <button
                   onClick={scrollToTop}
-                  className="bg-green-400 text-white px-4 py-4 rounded-full
+                  className="bg-green-400 text-white px-3 py-3 md:px-4 md:py-4 rounded-full
                  hover:bg-green-500 transition-transform transform hover:scale-110"
               >
                 <svg
