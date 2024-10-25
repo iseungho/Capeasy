@@ -130,7 +130,7 @@ function MainComponent(props) {
 
                         <motion.div
                             ref={introduce3}
-                            className="w-full h-auto aspect-[3841/4112] bg-introduce3-image bg-cover bg-center"
+                            className="w-full h-auto aspect-[3841/4320] bg-introduce3-image bg-cover bg-center"
                             initial={{opacity: 0, y: 20}}
                             animate={{
                                 opacity: introduceInView3 ? 1 : 0,
