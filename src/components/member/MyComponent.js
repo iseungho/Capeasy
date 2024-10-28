@@ -4,12 +4,13 @@ import ModifyModal from "../common/ModifyModal";
 import PageComponent from "../common/PageComponent";
 import { deleteBoard, getBoardListByMno } from "../../api/boardApi";
 import { getThumbnail } from "../../api/imageApi";
-import { getProfileImage, getProfileImageDataByMno } from "../../api/profileImageApi";
+import { getProfileImage } from "../../api/profileImageApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import BoardModal from "../board/BoardModal";
 import { getMember } from "../../api/memberApi";
 import BoardInfoModal from "../common/BoardInfoModal";
 import ProfileImageModal from "../common/ProfileImageChangeModal";
+import { useProfileContext } from "../../api/ProfileContext";
 
 const myBoardListInitState = {
     dtoList: [],
@@ -39,10 +40,12 @@ const MyComponent = ({ mno }) => {
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const { loginState } = useCustomLogin();
 
+    const { triggerProfileReload } = useProfileContext();
+
     const loadProfileImage = useCallback(async () => {
         if (!memberData?.mno) return;
         try {
-            const imageData = await getProfileImage(mno); // mno로 조회
+            const imageData = await getProfileImage(memberData.mno); // mno로 조회
 
             // Blob 객체가 맞는지 확인
             if (imageData instanceof Blob) {
@@ -68,7 +71,7 @@ const MyComponent = ({ mno }) => {
             return null;
         }
     }, []);
-
+ 
     const createBase64DataToBlob = (base64Data) => {
         const byteCharacters = atob(base64Data);
         const byteNumbers = new Array(byteCharacters.length);
@@ -81,7 +84,7 @@ const MyComponent = ({ mno }) => {
     };
 
     useEffect(() => {
-        loadProfileImage(); // 컴포넌트 마운트 시 프로필 이미지 로드
+        loadProfileImage(); 
     }, [loadProfileImage]);
 
     useEffect(() => {
@@ -157,6 +160,7 @@ const MyComponent = ({ mno }) => {
 
     const closeProfileImageChangeModal = async () => {
         setIsProfileModalOpen(false);
+        triggerProfileReload();
         await loadProfileImage();
     }
 

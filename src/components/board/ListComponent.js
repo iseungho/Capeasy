@@ -3,6 +3,7 @@ import BoardModal from "./BoardModal";
 import BoardInfoModal from "../common/BoardInfoModal";
 import ModifyModal from "../common/ModifyModal";
 import { getBoardList, deleteBoard } from "../../api/boardApi";
+import { getProfileImage } from "../../api/profileImageApi"
 import LoginModal from "../../components/member/LoginModal";
 import { getThumbnail } from "../../api/imageApi";
 import { getHeartListByBno, postHeart, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
@@ -37,6 +38,7 @@ const ListComponent = () => {
     const [isModifyModalOpen, setIsModifyModalOpen] = useState(null);
     const [likedBoards, setLikedBoards] = useState({});
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [profileImageMap, setprofileImageMap] = useState({});
     const [imageMap, setImageMap] = useState({});
 
     const { isLogin, loginState } = useCustomLogin();
@@ -49,6 +51,22 @@ const ListComponent = () => {
         } catch (error) {
             console.error('Error loading image:', error);
             return null;
+        }
+    }, []);
+
+    const loadProfileImage = useCallback(async (mno) => {
+        try {
+            const imageData = await getProfileImage(mno); // mno로 조회
+
+            // Blob 객체가 맞는지 확인
+            if (imageData instanceof Blob) {
+                return URL.createObjectURL(imageData); // Blob URL 생성
+            } else {
+                throw new Error("Returned data is not a Blob.");
+            }
+        } catch (error) {
+            console.error("Error fetching profile image:", error);
+            return ("https://i.ibb.co/PWd7PTH/Cabbi.jpg");
         }
     }, []);
 
@@ -70,12 +88,15 @@ const ListComponent = () => {
                 const data = await getBoardList({ page, size });
                 data.writerMno = 0;
                 setServerData(data);
-
+    
                 const newImageMap = {};
+                const newProfileImageMap = {};
                 for (const board of data.dtoList) {
                     newImageMap[board.bno] = await loadThumbnail(board.ino);
+                    newProfileImageMap[board.bno] = await loadProfileImage(board.writerId);
                 }
                 setImageMap(newImageMap);
+                setprofileImageMap(newProfileImageMap);
     
                 if (loginState?.mno && data.dtoList.length > 0) {
                     const likesState = {};
@@ -95,8 +116,7 @@ const ListComponent = () => {
         };
     
         fetchBoardAndLikes();
-    }, [loginState, page, size, refresh, loadThumbnail]);  // Removed serverData.dtoList dependency
-    
+    }, [loginState, page, size, refresh, loadThumbnail, loadProfileImage]);
 
     const handleBoardModalOpen = (bno) => {
         setIsBoardModalOpen(isBoardModalOpen === bno ? null : bno);
@@ -109,7 +129,7 @@ const ListComponent = () => {
     const handleModifyBoard = async (bno) => {
         setIsModifyModalOpen(isModifyModalOpen === bno ? null : bno);
     };
-    
+
     const handleDeleteBoard = async (bno) => {
         try {
             await deleteBoard(bno);
@@ -134,7 +154,7 @@ const ListComponent = () => {
         try {
             if (!likedBoards[bno]) {
                 await postHeart({
-                    bno : bno,
+                    bno: bno,
                     memberId: loginState.mno,
                     memberEmail: loginState.email,
                 });
@@ -172,7 +192,12 @@ const ListComponent = () => {
                     <div key={board.bno} className="post-item border-b border-gray-300 py-4 m-6 bg-white shadow-xl hover:shadow-2xl transition-shadow rounded-lg">
                         <div className="post-header flex justify-between items-center mb-3 px-4">
                             <div className="flex items-center cursor-pointer" onClick={() => handleMoveMypage(board.writerId)}>
-                                <div className="bg-profile-image bg-cover w-10 h-10 rounded-full mr-3"/>
+                                <img
+                                    className="bg-cover w-10 h-10 rounded-full mr-3"
+                                    src={profileImageMap[board.bno]}
+                                    alt="Cabbi"
+                                    border="0"
+                                />
                                 <div>
                                     <p className="accent-gray-800">{board.writerNickname}</p>
                                 </div>
@@ -200,10 +225,10 @@ const ListComponent = () => {
                         </div>
 
                         <div className="post-body"
-                             onClick={() => handleBoardModalOpen(board.bno)}>
+                            onClick={() => handleBoardModalOpen(board.bno)}>
                             <img
                                 className="w-full h-auto mb-3 cursor-pointer object-cover"
-                                style={{aspectRatio: '1 / 1', objectFit: 'cover'}}
+                                style={{ aspectRatio: '1 / 1', objectFit: 'cover' }}
                                 src={imageMap[board.bno] || "https://via.placeholder.com/800x600"}
                                 alt="Post Media"
                             />
@@ -229,7 +254,7 @@ const ListComponent = () => {
                     </div>
                 ))}
 
-                <PageComponent serverData={serverData} movePage={moveToBoardList}/>
+                <PageComponent serverData={serverData} movePage={moveToBoardList} />
 
                 <BoardInfoModal
                     isOpen={isBoardInfoModalOpen !== null}

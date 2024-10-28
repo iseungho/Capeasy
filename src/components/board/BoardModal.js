@@ -3,6 +3,7 @@ import { getBoard } from "../../api/boardApi";
 import { postReply, getReplyByBno, putReply, deleteReply } from "../../api/replyApi";
 import { postHeart, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
 import { getImage } from "../../api/imageApi";
+import { getProfileImage } from "../../api/profileImageApi"
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
@@ -17,6 +18,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
     const { isLogin, loginState } = useCustomLogin();
     const [boardReply, setBoardReply] = useState(null);
     const [boardData, setBoardData] = useState(null);
+    const [profileImage, setProfileImage] = useState(null);
     const [projection, setProjection] = useState(null);
     const [fetching, setFetching] = useState(false);
     const [liked, setLiked] = useState(false);
@@ -91,12 +93,24 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
         const loadImage = async () => {
             if (!boardData?.ino) return; // Stop loading if no board data or ino
             try {
+
+                const profileImageData = await getProfileImage(boardData.writerId);
+
+                if (profileImageData instanceof Blob) {
+                    const profileURL = URL.createObjectURL(profileImageData); // Blob URL 생성
+                    console.log(profileURL); // Blob URL 출력
+                    setProfileImage(profileURL); // 상태에 Blob URL 저장
+                } else {
+                    throw new Error("Returned data is not a Blob.");
+                }
+
                 const image = await getImage(boardData.ino);
                 const base64Data = image.fileContent;
                 const blobUrl = createBase64DataToBlob(base64Data);
                 setProjection(new EquirectProjection({ src: blobUrl }));
             } catch (error) {
                 console.error('이미지를 불러오는 중 오류 발생:', error);
+                setProfileImage("https://i.ibb.co/PWd7PTH/Cabbi.jpg"); // 기본 이미지
             }
         };
 
@@ -247,7 +261,14 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                     <div className="overflow-y-auto custom-scrollbar">
                         <div className="flex items-center mb-4 justify-between">
                             <div className="flex items-center cursor-pointer" onClick={() => handleMoveMypage(boardData.writerId)}>
-                                <div className="bg-profile-image bg-cover w-12 h-12 rounded-full mr-4"/>
+
+                                <img
+                                    className="bg-cover w-12 h-12 rounded-full mr-4"
+                                    src={profileImage}
+                                    alt="Cabbi"
+                                    border="0"
+                                />
+
                                 <h2 className="text-lg font-semibold text-gray-600">
                                     {boardData ? boardData.writerNickname : "로딩 중..."}
                                 </h2>
@@ -310,7 +331,7 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                                                             />
                                                             <div className="flex flex-shrink-0">
                                                                 <button onClick={handleCancelEdit}
-                                                                        className="px-4 py-2 rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-200">취소
+                                                                    className="px-4 py-2 rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-200">취소
                                                                 </button>
                                                                 <button
                                                                     className="px-4 py-2 rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-200"
