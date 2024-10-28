@@ -4,10 +4,12 @@ import ModifyModal from "../common/ModifyModal";
 import PageComponent from "../common/PageComponent";
 import { deleteBoard, getBoardListByMno } from "../../api/boardApi";
 import { getThumbnail } from "../../api/imageApi";
+import { getProfileImage, getProfileImageDataByMno } from "../../api/profileImageApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import BoardModal from "../board/BoardModal";
 import { getMember } from "../../api/memberApi";
 import BoardInfoModal from "../common/BoardInfoModal";
+import ProfileImageModal from "../common/ProfileImageChangeModal";
 
 const myBoardListInitState = {
     dtoList: [],
@@ -23,7 +25,7 @@ const myBoardListInitState = {
     writerMno: 0,
 };
 
-const MyComponent = ({mno}) => {
+const MyComponent = ({ mno }) => {
     const { page, size, refresh, moveToMyPage, setRefresh } = useCustomMove();
     const { moveToModify } = useCustomLogin();
     const [myBoardList, setMyBoardList] = useState(myBoardListInitState);
@@ -31,10 +33,30 @@ const MyComponent = ({mno}) => {
     const [isBoardModalOpen, setIsBoardModalOpen] = useState(null);
     const [imageMap, setImageMap] = useState({});
     const [memberData, setMemberData] = useState(null);
-
+    const [profileImage, setProfileImage] = useState(null);
     const [isModifyModalOpen, setIsModifyModalOpen] = useState(null);
     const [isBoardInfoModalOpen, setIsBoardInfoModalOpen] = useState(null);
-    const {loginState } = useCustomLogin();
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const { loginState } = useCustomLogin();
+
+    const loadProfileImage = useCallback(async () => {
+        if (!memberData?.mno) return;
+        try {
+            const imageData = await getProfileImage(mno); // mno로 조회
+
+            // Blob 객체가 맞는지 확인
+            if (imageData instanceof Blob) {
+                const profileURL = URL.createObjectURL(imageData); // Blob URL 생성
+                console.log(profileURL); // Blob URL 출력
+                setProfileImage(profileURL); // 상태에 Blob URL 저장
+            } else {
+                throw new Error("Returned data is not a Blob.");
+            }
+        } catch (error) {
+            console.error("Error fetching profile image:", error);
+            setProfileImage("https://i.ibb.co/PWd7PTH/Cabbi.jpg"); // 기본 이미지
+        }
+    }, [memberData]); 
 
     const loadThumbnail = useCallback(async (ino) => {
         try {
@@ -57,6 +79,10 @@ const MyComponent = ({mno}) => {
         const blob = new Blob([byteArray], { type: 'image/jpeg' });
         return URL.createObjectURL(blob);
     };
+
+    useEffect(() => {
+        loadProfileImage(); // 컴포넌트 마운트 시 프로필 이미지 로드
+    }, [loadProfileImage]);
 
     useEffect(() => {
         const fetchMemberData = async () => {
@@ -129,28 +155,48 @@ const MyComponent = ({mno}) => {
         setRefresh(!refresh);
     }
 
+    const closeProfileImageChangeModal = async () => {
+        setIsProfileModalOpen(false);
+        await loadProfileImage();
+    }
 
     return (
         <div className="h-screen w-screen overflow-auto">
             <div className="p-5 max-w-7xl mx-auto mt-32">
                 {/* Upper User Info */}
-                <div className="flex items-center mb-8 border-b pb-4 border-gray-300 justify-between">
-                    <div className="flex items-center">
-                        <button className="bg-profile-image bg-cover w-24 h-24 rounded-full mr-5" />
+                <div className="flex flex-col md:flex-row items-center mb-8 border-b pb-4 border-gray-300 justify-between">
+                    <div className="flex items-center mb-4 md:mb-0">
+                        <img
+                            className="w-24 h-24 rounded-full object-cover mr-5"
+                            src={profileImage}
+                            alt="Cabbi"
+                            border="0"
+                        />
                         <div>
                             <h2 className="text-2xl font-semibold">{memberData?.nickname}</h2>
                             <p className="text-gray-600">{memberData?.email}</p>
                         </div>
                     </div>
+
                     {memberData?.mno === loginState.mno && (
-                    <button
-                        className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-600 transition-colors"
-                        onClick={moveToModify}
-                    >
-                        회원정보 수정
-                    </button>
+                        <div className="mt-5 md:mt-0 flex flex-col md:flex-row md:justify-end items-stretch gap-2 w-full md:w-auto">
+                            <button
+                                className="px-4 py-2 md:bg-green-400 bg-gray-200 md:text-white md:font-normal font-bold rounded-md md:hover:bg-green-600 hover:bg-gray-300 transition-colors w-full md:w-auto"
+                                onClick={() => setIsProfileModalOpen(true)}
+                            >
+                                프로필 편집
+                            </button>
+                            <button
+                                className="px-4 py-2 md:bg-gray-400 bg-gray-200 md:text-white md:font-normal font-bold rounded-md md:hover:bg-gray-600 hover:bg-gray-300 transition-colors w-full md:w-auto"
+                                onClick={moveToModify}
+                            >
+                                회원정보 수정
+                            </button>
+                        </div>
                     )}
                 </div>
+
+
 
                 {/* Board List */}
                 <div>
@@ -177,13 +223,13 @@ const MyComponent = ({mno}) => {
                                         </p>
                                         {board.writerId === loginState.mno && (
                                             <button className="flex flex-col items-center justify-center text-gray-500 p-2"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation(); // 부모의 클릭 이벤트 방지
-                                                        handleBoardInfoModalOpen(board.bno);
-                                                    }}>
-                                                <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1"/>
-                                                <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1"/>
-                                                <span className="block w-1 h-1 bg-gray-500 rounded-full"/>
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // 부모의 클릭 이벤트 방지
+                                                    handleBoardInfoModalOpen(board.bno);
+                                                }}>
+                                                <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1" />
+                                                <span className="block w-1 h-1 bg-gray-500 rounded-full mb-1" />
+                                                <span className="block w-1 h-1 bg-gray-500 rounded-full" />
                                             </button>
                                         )}
                                     </div>
@@ -213,6 +259,12 @@ const MyComponent = ({mno}) => {
                     bno={isBoardInfoModalOpen}
                     onModify={handleModifyBoard}
                     onDelete={handleDeleteBoard}
+                />
+
+                <ProfileImageModal
+                    mno={mno}
+                    isOpen={isProfileModalOpen}
+                    onClose={closeProfileImageChangeModal}
                 />
             </div>
         </div>
