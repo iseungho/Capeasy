@@ -6,7 +6,7 @@ import MemberInfoSidebar from "../common/MemberInfoSidebar";
 import useCustomMove from "../../hooks/useCustomMove";
 import { useAutoLogout } from "../../hooks/useAutoLogout";
 import { getProfileImage } from "../../api/profileImageApi"
-import { useProfileContext } from "../../api/ProfileContext";
+import { useProfileContext } from "../../util/profileContext";
 
 const BasicMenu = ({ children }) => {
   const { shouldReloadProfile } = useProfileContext();
@@ -39,7 +39,6 @@ const BasicMenu = ({ children }) => {
       // Blob 객체가 맞는지 확인
       if (imageData instanceof Blob) {
         const profileURL = URL.createObjectURL(imageData); // Blob URL 생성
-        console.log(profileURL); // Blob URL 출력
         setProfileImage(profileURL); // 상태에 Blob URL 저장
       } else {
         throw new Error("Returned data is not a Blob.");

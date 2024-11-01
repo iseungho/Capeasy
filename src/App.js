@@ -1,7 +1,7 @@
 import './App.css';
 import { RouterProvider } from 'react-router-dom';
 import root from "./router/root";
-import { ProfileProvider } from './api/ProfileContext';
+import { ProfileProvider } from './util/profileContext';
 
 function App() {
   return (
