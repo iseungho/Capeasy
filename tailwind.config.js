@@ -7,7 +7,7 @@ module.exports = {
         "loading-image": "url('./asset/images/loading.gif')",
         "loading-image-s": "url('./asset/images/loading.gif')",
         "logo-image": "url('./asset/images/logo.png')",
-        "profile-image": "url('./asset/icon/Cabbi.jpg')",
+        "profile-image": "url('./asset/icon/cabbi.png')",
         "filter-image": "url('./asset/images/filter.png')",
         "about-image": "url('./asset/backgrounds/background.jpg')",
         "capture-image": "url('./asset/images/capture.png')",
