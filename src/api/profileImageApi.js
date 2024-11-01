@@ -16,7 +16,6 @@ export const postProfileImage = async (image, mno) => {
                 'Content-Type': 'multipart/form-data'
             }
         });
-        console.log("post profile image success")
         return res.data;
     } catch (error) {
         console.error('Error uploading profileimage:', error);
@@ -27,9 +26,14 @@ export const postProfileImage = async (image, mno) => {
 // 프로필 이미지 정보 조회
 export const getProfileImageData = async (pino) => {
     const res = await axios.get(`${prefix}/${pino}`);
-    console.log("get profile image data success")
     return res.data;
 
+};
+
+// 프로필 이미지 존재 여부 확인
+export const isExistsProfileImageByMno = async (mno) => {
+    const res = await axios.get(`${prefix}/exists/member/${mno}`);
+    return res.data;
 };
 
 // 회원 번호로 프로필 이미지 정보 조회
@@ -51,7 +55,6 @@ export const getProfileImageDataByMno = async (mno) => {
             }
         );
         const res = await axios.get(`${prefix}/member/${mno}`);
-        console.log("get profile image data by mno success");
         return res.data;
     } catch (error) {
         if (error.response?.status === 400) {
@@ -69,7 +72,6 @@ export const getProfileImageDataByMno = async (mno) => {
 export const getProfileImage = async (mno) => {
     try {
         const res = await axios.get(`${prefix}/view/member/${mno}`, { responseType: 'blob' });
-        console.log("get profile image success")
         return res.data;
     } catch (error) {
         console.error('Error Message:', error);
@@ -80,13 +82,11 @@ export const getProfileImage = async (mno) => {
 // 프로필 이미지 번호로 썸네일 불러오기
 export const getThumbnailByPino = async (mno) => {
     const res = await axios.get(`${prefix}/view/thumbnail/${mno}`);
-    console.log("get Thumbnail by pino success")
     return res.data;
 };
 
-// 프로필 이미지 삭제
-export const deleteProfileImage = async (pino) => {
-    const res = await jwtAxios.delete(`${prefix}/${pino}`);
-    console.log("delete profile image success")
+// 회원 번호로 프로필 이미지 삭제
+export const deleteProfileImageByMno = async (mno) => {
+    const res = await jwtAxios.delete(`${prefix}/member/${mno}`);
     return res.data;
 };

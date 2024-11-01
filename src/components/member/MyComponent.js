@@ -10,7 +10,7 @@ import BoardModal from "../board/BoardModal";
 import { getMember } from "../../api/memberApi";
 import BoardInfoModal from "../common/BoardInfoModal";
 import ProfileImageModal from "../common/ProfileImageChangeModal";
-import { useProfileContext } from "../../api/ProfileContext";
+import { useProfileContext } from "../../util/profileContext";
 
 const myBoardListInitState = {
     dtoList: [],
@@ -50,7 +50,6 @@ const MyComponent = ({ mno }) => {
             // Blob 객체가 맞는지 확인
             if (imageData instanceof Blob) {
                 const profileURL = URL.createObjectURL(imageData); // Blob URL 생성
-                console.log(profileURL); // Blob URL 출력
                 setProfileImage(profileURL); // 상태에 Blob URL 저장
             } else {
                 throw new Error("Returned data is not a Blob.");
@@ -136,6 +135,21 @@ const MyComponent = ({ mno }) => {
         setIsBoardModalOpen(isBoardModalOpen === bno ? null : bno);
     };
 
+    const handleProfileImageClick = () => {
+        if (memberData?.mno === loginState.mno) {
+            setIsProfileModalOpen(true); // 클릭 시 모달 열기
+        } else {
+            const imageUrl = profileImage; // 프로필 이미지 URL
+            const width = 400; // 새 창의 너비
+            const height = 400; // 새 창의 높이
+            const left = window.innerWidth / 2 - width / 2; // 중앙 정렬
+            const top = window.innerHeight / 2 - height / 2; // 중앙 정렬
+            const options = `width=${width},height=${height},top=${top},left=${left},resizable=yes`;
+
+            window.open(imageUrl, '_blank', options); // 새 창 열기
+        }
+    };
+
     const handleBoardInfoModalOpen = (bno) => {
         setIsBoardInfoModalOpen(isBoardInfoModalOpen === bno ? null : bno);
     };
@@ -169,13 +183,26 @@ const MyComponent = ({ mno }) => {
             <div className="p-5 max-w-7xl mx-auto mt-32">
                 {/* Upper User Info */}
                 <div className="flex flex-col md:flex-row items-center mb-8 border-b pb-4 border-gray-300 justify-between">
-                    <div className="flex items-center mb-4 md:mb-0">
-                        <img
-                            className="w-24 h-24 rounded-full object-cover mr-5"
-                            src={profileImage}
-                            alt="Cabbi"
-                            border="0"
-                        />
+                    <div className="relative flex items-center mb-4 md:mb-0">
+                        {/* 프로필 이미지와 프로필 수정 버튼을 감싸는 div */}
+                        <div className="relative w-24 h-24 mr-5 group">
+                            <img
+                                className="w-full h-full rounded-full object-cover cursor-pointer transition duration-300"
+                                src={profileImage}
+                                alt="Cabbi"
+                                onClick={handleProfileImageClick}
+                            />
+                            <div
+                                className={`absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity rounded-full ${memberData?.mno === loginState.mno ? '' : 'hidden'}`}>
+                                <button
+                                    className={`absolute inset-0 flex items-center justify-center text-white font-semibold text-xs opacity-0 group-hover:opacity-100 transition-opacity ${memberData?.mno === loginState.mno ? '' : 'hidden'}`}
+                                    onClick={handleProfileImageClick}
+                                >
+                                    프로필 수정
+                                </button>
+                            </div>
+                        </div>
+                        {/* 사용자 정보 */}
                         <div>
                             <h2 className="text-2xl font-semibold">{memberData?.nickname}</h2>
                             <p className="text-gray-600">{memberData?.email}</p>
@@ -183,13 +210,8 @@ const MyComponent = ({ mno }) => {
                     </div>
 
                     {memberData?.mno === loginState.mno && (
-                        <div className="mt-5 md:mt-0 flex flex-col md:flex-row md:justify-end items-stretch gap-2 w-full md:w-auto">
-                            <button
-                                className="px-4 py-2 md:bg-green-400 bg-gray-200 md:text-white md:font-normal font-bold rounded-md md:hover:bg-green-600 hover:bg-gray-300 transition-colors w-full md:w-auto"
-                                onClick={() => setIsProfileModalOpen(true)}
-                            >
-                                프로필 편집
-                            </button>
+                        <div
+                            className="mt-5 md:mt-0 flex flex-col md:flex-row md:justify-end items-stretch gap-2 w-full md:w-auto">
                             <button
                                 className="px-4 py-2 md:bg-gray-400 bg-gray-200 md:text-white md:font-normal font-bold rounded-md md:hover:bg-gray-600 hover:bg-gray-300 transition-colors w-full md:w-auto"
                                 onClick={moveToModify}
@@ -201,10 +223,9 @@ const MyComponent = ({ mno }) => {
                 </div>
 
 
-
                 {/* Board List */}
                 <div>
-                    <h3 className="text-xl font-medium mb-4">내 게시글</h3>
+                <h3 className="text-xl font-medium mb-4">내 게시글</h3>
                     {fetching ? (
                         <p>Loading...</p>
                     ) : (
@@ -217,7 +238,7 @@ const MyComponent = ({ mno }) => {
                                 >
                                     <img
                                         className="w-full h-auto mb-1 cursor-pointer object-cover"
-                                        style={{ aspectRatio: '1 / 1', objectFit: 'cover' }}
+                                        style={{aspectRatio: '1 / 1', objectFit: 'cover'}}
                                         src={imageMap[board.bno]}
                                         alt="Board Thumbnail"
                                     />
