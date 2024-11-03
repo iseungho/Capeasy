@@ -250,12 +250,14 @@ const LoginModal = ({ isOpen, onClose }) => {
                 {/* 소셜 로그인 버튼들 */}
                 <div className="space-y-3">
                     <button
+                        onClick={() => alert("네이버 로그인은 아직 준비 중입니다!")}
                         className="w-full flex items-center justify-center bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition"
                     >
                         Continue with Naver
                     </button>
 
                     <button
+                        onClick={() => alert("카카오 로그인은 아직 준비 중입니다!")}
                         className="w-full flex items-center justify-center bg-yellow-400 text-black py-3 rounded-lg hover:bg-yellow-500 transition"
                     >
                         Continue with Kakao
