@@ -3,13 +3,14 @@ import BoardModal from "./BoardModal";
 import BoardInfoModal from "../common/BoardInfoModal";
 import ModifyModal from "../common/ModifyModal";
 import { getBoardList, deleteBoard } from "../../api/boardApi";
-import { getProfileThumbnail } from "../../util/profileImageUtils";
+import { getProfileThumbnail } from "../../util/profileImageUtil";
 import LoginModal from "../../components/member/LoginModal";
 import { getThumbnail } from "../../api/imageApi";
 import { getHeartListByBno, postHeart, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import PageComponent from "../common/PageComponent";
+import { createBase64DataToBlob } from "../../util/imageUtil";
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
@@ -58,17 +59,6 @@ const ListComponent = () => {
         const thumbnailURL = await getProfileThumbnail(mno);
        return thumbnailURL;
     }, []);
-
-    const createBase64DataToBlob = (base64Data) => {
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        return URL.createObjectURL(blob);
-    };
 
     useEffect(() => {
         const fetchBoardAndLikes = async () => {

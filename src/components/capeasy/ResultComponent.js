@@ -5,6 +5,7 @@ import { getImage } from '../../api/imageApi';
 import confetti from "canvas-confetti";
 import useCustomMove from '../../hooks/useCustomMove';
 import WriteModal from '../common/WriteModal';
+import { createBase64DataToBlob } from "../../util/imageUtil";
 
 const ResultComponent = ({ ino }) => {
     const { refresh } = useCustomMove();
@@ -41,16 +42,6 @@ const ResultComponent = ({ ino }) => {
         loadImage();
     }, [ino]);
 
-    const createBase64DataToBlob = (base64Data) => {
-        const byteCharacters = atob(base64Data); // base64 문자열을 디코드
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' }); // 적절한 MIME 타입 설정
-        return URL.createObjectURL(blob); // Blob URL로 변환
-    };
 
     const handleDownloadClick = async (e) => {
         e.preventDefault();

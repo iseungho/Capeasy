@@ -3,11 +3,12 @@ import { getBoard } from "../../api/boardApi";
 import { postReply, getReplyByBno, putReply, deleteReply } from "../../api/replyApi";
 import { postHeart, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
 import { getImage } from "../../api/imageApi";
-import { getProfileThumbnail } from "../../util/profileImageUtils";
+import { getProfileThumbnail } from "../../util/profileImageUtil";
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
 import "@egjs/react-view360/css/view360.min.css";
+import { createBase64DataToBlob } from "../../util/imageUtil";
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
@@ -109,17 +110,6 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
 
         loadImage();
     }, [boardData]);
-
-    const createBase64DataToBlob = (base64Data) => {
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        return URL.createObjectURL(blob);
-    };
 
     const controlBar = useMemo(() => new ControlBar({ FullscreenButton: true }), []);
 

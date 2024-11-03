@@ -10,7 +10,8 @@ import { getMember } from "../../api/memberApi";
 import BoardInfoModal from "../common/BoardInfoModal";
 import ProfileImageModal from "../common/ProfileImageChangeModal";
 import { useProfileContext } from "../../util/profileContext";
-import {fetchProfileImage, fetchProfileThumbnail} from "../../util/profileImageUtils";
+import {fetchProfileImage, fetchProfileThumbnail} from "../../util/profileImageUtil";
+import { createBase64DataToBlob } from "../../util/imageUtil";
 
 const myBoardListInitState = {
     dtoList: [],
@@ -34,7 +35,7 @@ const MyComponent = ({ mno }) => {
     const [isBoardModalOpen, setIsBoardModalOpen] = useState(null);
     const [imageMap, setImageMap] = useState({});
     const [memberData, setMemberData] = useState(null);
-    const [profileImage, setProfileImage] = useState(null);
+    const [, setProfileImage] = useState(null);
     const [isModifyModalOpen, setIsModifyModalOpen] = useState(null);
     const [isBoardInfoModalOpen, setIsBoardInfoModalOpen] = useState(null);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -59,17 +60,6 @@ const MyComponent = ({ mno }) => {
             return null;
         }
     }, []);
- 
-    const createBase64DataToBlob = (base64Data) => {
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        return URL.createObjectURL(blob);
-    };
 
     useEffect(() => {
         loadProfileImage();
