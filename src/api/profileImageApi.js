@@ -72,6 +72,8 @@ export const getProfileImageDataByMno = async (mno) => {
 export const getProfileImage = async (mno) => {
     try {
         const res = await axios.get(`${prefix}/view/member/${mno}`, { responseType: 'blob' });
+        console.log("get profile image");
+
         return res.data;
     } catch (error) {
         console.error('Error Message:', error);
@@ -80,9 +82,15 @@ export const getProfileImage = async (mno) => {
 };
 
 // 프로필 이미지 번호로 썸네일 불러오기
-export const getThumbnailByPino = async (mno) => {
-    const res = await axios.get(`${prefix}/view/thumbnail/${mno}`);
-    return res.data;
+export const viewThumbnailGetByMno = async (mno) => {
+    try{
+        const res = await axios.get(`${prefix}/view/thumbnail/member/${mno}`, { responseType: 'blob' });
+        console.log("get thumbnail profile image");
+        return res.data;
+    } catch (error) {
+        console.error('Error Message:', error);
+        return { error: error.response ? error.response.data : error.message };
+    }
 };
 
 // 회원 번호로 프로필 이미지 삭제
