@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { postProfileImage, deleteProfileImageByMno } from "../../api/profileImageApi";
-import { fetchProfileImage, fetchProfileThumbnail } from "../../util/profileImageUtils";
+import { fetchProfileImage, fetchProfileThumbnail } from "../../util/profileImageUtil";
 import defaultImage from "../../asset/icon/cabbi.png";
 
 const ProfileImageChangeModal = ({ mno, isOpen, onClose }) => {
-    const [profileImage, setProfileImage] = useState(null);
+    const [, setProfileImage] = useState(null);
     const [profileThumbnailImage, setProfileThumbnailImage] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [preview, setPreview] = useState(null);
@@ -99,7 +99,7 @@ const ProfileImageChangeModal = ({ mno, isOpen, onClose }) => {
                     </div>
 
                     <div className="flex justify-between mb-4">
-                        {mno && profileImage && (
+                        {mno && profileThumbnailImage && (
                             <button
                                 onClick={handleBasicImage}
                                 className={`text-blue-500 hover:underline text-sm`}

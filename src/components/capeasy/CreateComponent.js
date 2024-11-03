@@ -116,12 +116,12 @@ function CreateComponent(props) {
                 onDrop={handleDrop}
                 onDragEnter={handleDragStart}
                 onDragLeave={handleDragEnd}
-                className={`w-[50vw] h-[50vh] rounded-3xl border-green-200 border-2 shadow-lg
+                className={`w-[70vw] h-[60vh] md:w-[50vw] md:h-[50vh] rounded-3xl border-green-200 border-2 shadow-lg cursor-pointer
                     ${isActive ? "bg-gray-200" : "bg-white"}
                     flex items-center justify-center
                     text-green-500 text-lg font-semibold hover:bg-gray-200 hover:shadow-lg transition-shadow`}
             >
-              <span>클릭 혹은 드래그해서 영상을 올려주세요.</span>
+              <span className="md:text-xl text-base m-2">클릭 혹은 드래그해서 영상을 올려주세요.</span>
             </div>
         ) : (
             <div className="w-[60vw] h-[60vh] relative">
