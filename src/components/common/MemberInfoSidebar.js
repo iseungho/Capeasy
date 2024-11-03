@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
-import { fetchProfileThumbnail } from "../../util/profileImageUtils";
+import { fetchProfileThumbnail } from "../../util/profileImageUtil";
 import { useProfileContext } from "../../util/profileContext";
 
 const MemberInfoSidebar = ({ isOpen, onClose, onLogout }) => {
