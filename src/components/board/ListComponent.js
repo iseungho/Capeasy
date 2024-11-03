@@ -3,7 +3,7 @@ import BoardModal from "./BoardModal";
 import BoardInfoModal from "../common/BoardInfoModal";
 import ModifyModal from "../common/ModifyModal";
 import { getBoardList, deleteBoard } from "../../api/boardApi";
-import { getProfileImage } from "../../api/profileImageApi"
+import { getProfileThumbnail } from "../../util/profileImageUtils";
 import LoginModal from "../../components/member/LoginModal";
 import { getThumbnail } from "../../api/imageApi";
 import { getHeartListByBno, postHeart, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
@@ -38,7 +38,7 @@ const ListComponent = () => {
     const [isModifyModalOpen, setIsModifyModalOpen] = useState(null);
     const [likedBoards, setLikedBoards] = useState({});
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-    const [profileImageMap, setprofileImageMap] = useState({});
+    const [profileImageMap, setProfileImageMap] = useState({});
     const [imageMap, setImageMap] = useState({});
 
     const { isLogin, loginState } = useCustomLogin();
@@ -55,19 +55,8 @@ const ListComponent = () => {
     }, []);
 
     const loadProfileImage = useCallback(async (mno) => {
-        try {
-            const imageData = await getProfileImage(mno); // mno로 조회
-
-            // Blob 객체가 맞는지 확인
-            if (imageData instanceof Blob) {
-                return URL.createObjectURL(imageData); // Blob URL 생성
-            } else {
-                throw new Error("Returned data is not a Blob.");
-            }
-        } catch (error) {
-            console.error("Error fetching profile image:", error);
-            return ("https://i.ibb.co/PWd7PTH/Cabbi.jpg");
-        }
+        const thumbnailURL = await getProfileThumbnail(mno);
+       return thumbnailURL;
     }, []);
 
     const createBase64DataToBlob = (base64Data) => {
@@ -96,7 +85,7 @@ const ListComponent = () => {
                     newProfileImageMap[board.bno] = await loadProfileImage(board.writerId);
                 }
                 setImageMap(newImageMap);
-                setprofileImageMap(newProfileImageMap);
+                setProfileImageMap(newProfileImageMap);
     
                 if (loginState?.mno && data.dtoList.length > 0) {
                     const likesState = {};

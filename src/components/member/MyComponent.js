@@ -4,13 +4,13 @@ import ModifyModal from "../common/ModifyModal";
 import PageComponent from "../common/PageComponent";
 import { deleteBoard, getBoardListByMno } from "../../api/boardApi";
 import { getThumbnail } from "../../api/imageApi";
-import { getProfileImage } from "../../api/profileImageApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import BoardModal from "../board/BoardModal";
 import { getMember } from "../../api/memberApi";
 import BoardInfoModal from "../common/BoardInfoModal";
 import ProfileImageModal from "../common/ProfileImageChangeModal";
 import { useProfileContext } from "../../util/profileContext";
+import {fetchProfileImage, fetchProfileThumbnail} from "../../util/profileImageUtils";
 
 const myBoardListInitState = {
     dtoList: [],
@@ -38,27 +38,16 @@ const MyComponent = ({ mno }) => {
     const [isModifyModalOpen, setIsModifyModalOpen] = useState(null);
     const [isBoardInfoModalOpen, setIsBoardInfoModalOpen] = useState(null);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [profileThumbnailImage, setProfileThumbnailImage] = useState(null);
     const { loginState } = useCustomLogin();
 
     const { triggerProfileReload } = useProfileContext();
 
     const loadProfileImage = useCallback(async () => {
         if (!memberData?.mno) return;
-        try {
-            const imageData = await getProfileImage(memberData.mno); // mno로 조회
-
-            // Blob 객체가 맞는지 확인
-            if (imageData instanceof Blob) {
-                const profileURL = URL.createObjectURL(imageData); // Blob URL 생성
-                setProfileImage(profileURL); // 상태에 Blob URL 저장
-            } else {
-                throw new Error("Returned data is not a Blob.");
-            }
-        } catch (error) {
-            console.error("Error fetching profile image:", error);
-            setProfileImage("https://i.ibb.co/PWd7PTH/Cabbi.jpg"); // 기본 이미지
-        }
-    }, [memberData]); 
+        const thumbnailURL = await fetchProfileThumbnail(mno, setProfileThumbnailImage);
+        setProfileImage(thumbnailURL); // 상태에 썸네일 URL 저장
+    }, [mno, memberData]);
 
     const loadThumbnail = useCallback(async (ino) => {
         try {
@@ -83,7 +72,7 @@ const MyComponent = ({ mno }) => {
     };
 
     useEffect(() => {
-        loadProfileImage(); 
+        loadProfileImage();
     }, [loadProfileImage]);
 
     useEffect(() => {
@@ -135,11 +124,11 @@ const MyComponent = ({ mno }) => {
         setIsBoardModalOpen(isBoardModalOpen === bno ? null : bno);
     };
 
-    const handleProfileImageClick = () => {
+    const handleProfileImageClick = async () => {
         if (memberData?.mno === loginState.mno) {
             setIsProfileModalOpen(true); // 클릭 시 모달 열기
         } else {
-            const imageUrl = profileImage; // 프로필 이미지 URL
+            const imageUrl = await fetchProfileImage(mno, setProfileImage);
             const width = 400; // 새 창의 너비
             const height = 400; // 새 창의 높이
             const left = window.innerWidth / 2 - width / 2; // 중앙 정렬
@@ -188,8 +177,8 @@ const MyComponent = ({ mno }) => {
                         <div className="relative w-24 h-24 mr-5 group">
                             <img
                                 className="w-full h-full rounded-full object-cover cursor-pointer transition duration-300"
-                                src={profileImage}
-                                alt="Cabbi"
+                                src={profileThumbnailImage}
+                                alt="profile"
                                 onClick={handleProfileImageClick}
                             />
                             <div

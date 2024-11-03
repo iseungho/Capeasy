@@ -3,7 +3,7 @@ import { getBoard } from "../../api/boardApi";
 import { postReply, getReplyByBno, putReply, deleteReply } from "../../api/replyApi";
 import { postHeart, deleteHeart, findHnoByMnoBno } from "../../api/heartApi";
 import { getImage } from "../../api/imageApi";
-import { getProfileImage } from "../../api/profileImageApi"
+import { getProfileThumbnail } from "../../util/profileImageUtils";
 import useCustomMove from "../../hooks/useCustomMove";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import View360, { EquirectProjection, ControlBar } from "@egjs/react-view360";
@@ -94,15 +94,8 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
             if (!boardData?.ino) return; // Stop loading if no board data or ino
             try {
 
-                const profileImageData = await getProfileImage(boardData.writerId);
-
-                if (profileImageData instanceof Blob) {
-                    const profileURL = URL.createObjectURL(profileImageData); // Blob URL 생성
-                    console.log(profileURL); // Blob URL 출력
-                    setProfileImage(profileURL); // 상태에 Blob URL 저장
-                } else {
-                    throw new Error("Returned data is not a Blob.");
-                }
+                const profileImage = await getProfileThumbnail(boardData.writerId);
+                setProfileImage(profileImage);
 
                 const image = await getImage(boardData.ino);
                 const base64Data = image.fileContent;

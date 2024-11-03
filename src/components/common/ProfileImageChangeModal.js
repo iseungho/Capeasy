@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { getProfileImage, getProfileImageDataByMno, postProfileImage, deleteProfileImageByMno, isExistsProfileImageByMno } from "../../api/profileImageApi";
+import { postProfileImage, deleteProfileImageByMno } from "../../api/profileImageApi";
+import { fetchProfileImage, fetchProfileThumbnail } from "../../util/profileImageUtils";
 import defaultImage from "../../asset/icon/cabbi.png";
 
 const ProfileImageChangeModal = ({ mno, isOpen, onClose }) => {
     const [profileImage, setProfileImage] = useState(null);
+    const [profileThumbnailImage, setProfileThumbnailImage] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [preview, setPreview] = useState(null);
     const [isBasic, setIsBasic] = useState(false);
@@ -14,31 +16,7 @@ const ProfileImageChangeModal = ({ mno, isOpen, onClose }) => {
         if (mno && isOpen) {
             setSelectedImage(null);
             setPreview(null);
-            const fetchProfileImage = async () => {
-                try {
-                    const isExistsProfileData = await isExistsProfileImageByMno(mno);
-                    if (isExistsProfileData === true) {
-                        const data = await getProfileImageDataByMno(mno);
-                        if (data.error === "NOT_EXIST_IMAGE") {
-                            setProfileImage(DEFAULT_IMAGE);
-                            return;
-                        }
-
-                        const imageData = await getProfileImage(mno);
-
-                        if (imageData instanceof Blob) {
-                            const profileURL = URL.createObjectURL(imageData);
-                            setProfileImage(profileURL);
-                        } else {
-                            throw new Error("Returned data is not a Blob.");
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error fetching profile image:", error.message);
-                    setProfileImage(DEFAULT_IMAGE);
-                }
-            };
-            fetchProfileImage();
+            fetchProfileThumbnail(mno, setProfileThumbnailImage, DEFAULT_IMAGE); // 썸네일 이미지 로드
         }
     }, [mno, isOpen, DEFAULT_IMAGE]);
 
@@ -79,10 +57,19 @@ const ProfileImageChangeModal = ({ mno, isOpen, onClose }) => {
         }
     };
 
-    const handleImageClick = () => {
-        // 새 창에서 프로필 이미지를 열기
-        const imageUrl = preview || profileImage || DEFAULT_IMAGE;
-        window.open(imageUrl, '_blank');
+    const handleImageClick = async () => {
+        if (preview) {
+            window.open(preview, '_blank');
+        } else {
+            const imageUrl = await fetchProfileImage(mno, setProfileImage, DEFAULT_IMAGE);
+            const width = 400; // 새 창의 너비
+            const height = 400; // 새 창의 높이
+            const left = window.innerWidth / 2 - width / 2; // 중앙 정렬
+            const top = window.innerHeight / 2 - height / 2; // 중앙 정렬
+            const options = `width=${width},height=${height},top=${top},left=${left},resizable=yes`;
+
+            window.open(imageUrl, '_blank', options); // 새 창 열기
+        }
     };
 
     return (
@@ -94,9 +81,9 @@ const ProfileImageChangeModal = ({ mno, isOpen, onClose }) => {
                     <div className="flex justify-center mb-6">
                         <img
                             className="w-32 h-32 rounded-full shadow-xl object-cover cursor-pointer transition-transform transform hover:scale-105"
-                            src={preview || profileImage || DEFAULT_IMAGE}
+                            src={preview || profileThumbnailImage || DEFAULT_IMAGE}
                             alt="Profile"
-                            onClick={handleImageClick} // 클릭 시 새 창 열기
+                            onClick={handleImageClick}
                         />
                     </div>
 
