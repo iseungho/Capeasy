@@ -104,7 +104,6 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
                 setProjection(new EquirectProjection({ src: blobUrl }));
             } catch (error) {
                 console.error('이미지를 불러오는 중 오류 발생:', error);
-                setProfileImage("https://i.ibb.co/PWd7PTH/Cabbi.jpg"); // 기본 이미지
             }
         };
 
