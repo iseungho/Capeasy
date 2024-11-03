@@ -111,7 +111,7 @@ const BasicMenu = ({ children }) => {
             <nav className="space-x-4 flex items-center">
               {!loginState.email ? (
                   <button
-                      className="bg-green-400 text-white px-6 py-3 rounded-lg hover:bg-green-500 w-32 h-12 flex items-center justify-center shadow-md hover:shadow-lg transition-shadow text-lg"
+                      className="bg-green-400 text-white px-6 py-3 rounded-lg hover:bg-green-500 md:w-32 w-18 md:h-12 h-10 flex items-center justify-center shadow-md hover:shadow-lg transition-shadow text-lg"
                       onClick={openLoginModal}
                   >
                     Login
