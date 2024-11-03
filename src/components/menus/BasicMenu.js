@@ -5,7 +5,7 @@ import LoginModal from "../member/LoginModal";
 import MemberInfoSidebar from "../common/MemberInfoSidebar";
 import useCustomMove from "../../hooks/useCustomMove";
 import { useAutoLogout } from "../../hooks/useAutoLogout";
-import { fetchProfileThumbnail } from "../../util/profileImageUtils";
+import { fetchProfileThumbnail } from "../../util/profileImageUtil";
 import { useProfileContext } from "../../util/profileContext";
 
 const BasicMenu = ({ children }) => {
