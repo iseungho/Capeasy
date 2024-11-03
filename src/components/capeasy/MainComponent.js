@@ -153,10 +153,10 @@ function MainComponent(props) {
                     }}>
                         <div className="text-4xl mb-4">💸</div>
                         <h3 className="text-2xl font-bold mb-2">강 보 찬</h3>
-                        <h4>Back-end</h4>
-                        <p>SRCNN 필터를 사용한 화질 개선</p>
-                        <p>Open-CV를 활용한 이미지 스티칭 구현</p>
-                        <p>스티칭을 위한 Flask Rest API 구축</p>
+                        <h4>stitching-service</h4>
+                        <p>이미지 초해상화 알고리즘 구현</p>
+                        <p>OpenCV 기반 스티칭 알고리즘 구현</p>
+                        <p>FastAPI 기반 스티칭 서버 개발</p>
                     </div>
                     <div
                         className="bg-white p-6 rounded-lg shadow-lg text-center"
@@ -166,11 +166,10 @@ function MainComponent(props) {
                     >
                         <div className="text-4xl mb-4">📊</div>
                         <h3 className="text-2xl font-bold mb-2">권 덕 재</h3>
-                        <h4>Back-end</h4>
-                        <p>Spring 서버 구축</p>
-                        <p>비디오 및 이미지 DB 관리</p>
-                        <p>스티칭을 위한 Flask Rest API 구축</p>
-                        <p>AWS를 활용한 배포 및 CI/CD</p>
+                        <h4>back-end</h4>
+                        <p>ERD 설계 및 데이터베이스 구축</p>
+                        <p>Spring Boot 기반 백엔드 API 서버 개발</p>
+                        <p>AWS를 통한 서비스 배포 및 CI/CD 구현</p>
                     </div>
                     <div className="bg-white p-6 rounded-lg shadow-lg text-center"  onClick={() => {
                         window.open('https://github.com/iseungho', '_blank');
@@ -178,10 +177,10 @@ function MainComponent(props) {
                     >
                         <div className="text-4xl mb-4">🔒</div>
                         <h3 className="text-2xl font-bold mb-2">이 승 호</h3>
-                        <h4>Front-end</h4>
-                        <p>React 반응형 웹 제작</p>
-                        <p>Tailwind를 이용한 UI/UX</p>
-                        <p>VIEW360을 사용한 VR 뷰어</p>
+                        <h4>front-end</h4>
+                        <p>React 기반 웹 애플리케이션 개발</p>
+                        <p>Tailwind를 활용한 UI/UX 구현</p>
+                        <p>VIEW360을 활용한 VR 뷰어 기능 구현</p>
                     </div>
                     <div className="bg-white p-6 rounded-lg shadow-lg text-center"  onClick={() => {
                         window.open('https://github.com/FIFLove', '_blank');
@@ -189,10 +188,10 @@ function MainComponent(props) {
                     >
                         <div className="text-4xl mb-4">🔒</div>
                         <h3 className="text-2xl font-bold mb-2">김 기 현</h3>
-                        <h4>Front-end</h4>
-                        <p>React 반응형 웹 제작</p>
-                        <p>Tailwind를 이용한 UI/UX</p>
-                        <p>VIEW360을 사용한 VR 뷰어</p>
+                        <h4>front-end</h4>
+                        <p>React 기반 웹 애플리케이션 개발</p>
+                        <p>Tailwind를 활용한 UI/UX 구현</p>
+                        <p>VIEW360을 활용한 VR 뷰어 기능 구현</p>
                     </div>
                 </div>
             </section>
