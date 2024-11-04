@@ -21,8 +21,8 @@ export const loginPost = async (loginParam) => {
     return res.data
 }
 
-export const getMember = async(mno) => {
-        const res = await axios.get(`${prefix}/${mno}`);
+export const getMember = async (mno) => {
+    const res = await axios.get(`${prefix}/${mno}`);
     return res.data;
 }
 
