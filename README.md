@@ -11,11 +11,13 @@ Implementation of a web application that converts a video into a spatial image
 - 사용자가 생성한 공간 이미지를 활용하여 게시글 작성을 통해 손쉽게 공유할 수 있는 서비스
 - 게시글에 추천 및 댓글 기능을 통해 다른 사용자와 상호작용할 수 있는 서비스
 
- ---
+---
 
  ## 연관 프로젝트
 - Backend API Server: [vp-api-server](https://github.com/juintination/vp-api-server)
 - Stitching API Server: [stitching-api-server](https://github.com/WellshCorgi/stitching-api-server)
+
+---
 
 ## 목차
 
