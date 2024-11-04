@@ -59,6 +59,8 @@ export const putBoard = async (bno, boardData) => {
     const formData = new FormData();
     formData.append('title', boardData.title); 
     formData.append('content', boardData.content);
+    formData.append('writerId', boardData.writerId);
+    formData.append('writerEmail', boardData.writerEmail);
 
     const res = await jwtAxios.put(`${prefix}/${bno}`, formData);
 

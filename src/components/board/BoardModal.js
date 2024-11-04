@@ -184,18 +184,22 @@ const BoardModal = ({ isOpen, onClose, bno }) => {
         setCommentEditText(reply.content);
     };
 
-    const handleDeleteClick = async (replyId) => {
+    const handleDeleteClick = async (rno) => {
         try {
-            await deleteReply(replyId);
+            await deleteReply(rno);
             setRefresh(!refresh); // Refresh comments after deletion
         } catch (error) {
             console.error("댓글 삭제 중 오류 발생:", error);
         }
     };
 
-    const handleUpdateComment = async (replyId) => {
+    const handleUpdateComment = async (rno) => {
         try {
-            await putReply(replyId, commentEditText);
+            await putReply(rno, {
+                content: commentEditText,
+                replierId: loginState.mno,
+                replierEmail: loginState.email
+            });
             setEditingComment(null);
             setRefresh(!refresh); // Refresh comments after update
         } catch (error) {

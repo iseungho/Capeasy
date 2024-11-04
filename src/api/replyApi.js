@@ -29,10 +29,12 @@ export const getReplyByBno = async (bno) => {
     return res.data
 }
 
-export const putReply = async (rno, content) => {
+export const putReply = async (rno, replyData) => {
     const formData = new FormData();
+    formData.append('content', replyData.content);
+    formData.append('replierId', replyData.replierId);
+    formData.append('replierEmail', replyData.replierEmail);
 
-    formData.append('content', content);
     const res = await jwtAxios.put(`${prefix}/${rno}`, formData);
 
     return res.data
