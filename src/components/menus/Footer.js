@@ -6,16 +6,10 @@ const Footer = () => (
             <p className="text-lg">&copy; 2024 CapEasy. All rights reserved.</p>
             <div className="flex justify-center space-x-6 mt-4">
                 <a
-                    href="/privacy-policy"
+                    href="https://github.com/comprehensive-giftset"
                     className="text-gray-400 hover:text-white transition duration-300"
                 >
-                    Privacy Policy
-                </a>
-                <a
-                    href="/service"
-                    className="text-gray-400 hover:text-white transition duration-300"
-                >
-                    Terms of Service
+                    Github Organization
                 </a>
                 <a
                     href="mailto:ghehf51@naver.com"
