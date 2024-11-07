@@ -12,19 +12,16 @@ const refreshJWT = async (accessToken, refreshToken) => {
 
     const res = await axios.get(`${prefix}/member/refresh?refreshToken=${refreshToken}`, header)
 
-    console.log("Refresh token..............")
-
     return res.data
 }
 
 // before request
 const beforeReq = (config) => {
-    console.log("before request.............")
 
     const memberInfo = getCookie("member")
 
     if (!memberInfo) {
-        console.log("Member NOT FOUND")
+        console.error("Member NOT FOUND")
         return Promise.reject(
             {
                 response:
@@ -47,15 +44,12 @@ const beforeReq = (config) => {
 
 // fail request
 const requestFail = (err) => {
-    console.log("request error............")
+    console.error("request error............")
     return Promise.reject(err)
 }
 
 // before return response
 const beforeRes = async (res) => {
-    console.log("before return response...........")
-
-    // 'ERROR_ACCESS_TOKEN'
     const data = res.data
 
     if (data && data.error === 'ERROR_ACCESS_TOKEN') {
@@ -83,7 +77,7 @@ const beforeRes = async (res) => {
 
 // fail response
 const responseFail = (err) => {
-    console.log("response fail error.............")
+    console.error("response fail error.............")
     return Promise.reject(err);
 }
 

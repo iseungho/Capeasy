@@ -29,7 +29,6 @@ export const getImage = async (ino) => {
 };
 
 export const getThumbnail = async (ino) => {
-    console.log("getThumbnail success")
     const res = await axios.get(`${prefix}/view/thumbnail/${ino}`);
     return res.data;
 };

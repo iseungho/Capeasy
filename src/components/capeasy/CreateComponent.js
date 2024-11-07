@@ -82,7 +82,6 @@ function CreateComponent(props) {
 
       postVideo(selectedFile, loginInfo.mno)
           .then((data) => {
-            console.log(data);
             setIsLoading(false);
             resetFileInput();
             moveToWait(data);

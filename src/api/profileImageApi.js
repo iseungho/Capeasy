@@ -39,7 +39,6 @@ export const isExistsProfileImageByMno = async (mno) => {
 // 회원 번호로 프로필 이미지 정보 조회
 export const getProfileImageDataByMno = async (mno) => {
     if (!mno) {
-        console.log("Invalid mno: Skipping profile image request.");
         return null;
     }
 
@@ -48,7 +47,7 @@ export const getProfileImageDataByMno = async (mno) => {
             (response) => response, // 성공 시 응답 그대로 반환
             (error) => {
                 if (error.response?.status === 400) {
-                    console.log("400 Error suppressed: Invalid request.");
+                    console.error("400 Error suppressed: Invalid request.");
                     return Promise.resolve({ error: 'Invalid mno. No profile data.' }); // 에러를 처리한 뒤 성공으로 변환
                 }
                 return Promise.reject(error); // 다른 에러는 그대로 던짐
@@ -72,7 +71,6 @@ export const getProfileImageDataByMno = async (mno) => {
 export const getProfileImage = async (mno) => {
     try {
         const res = await axios.get(`${prefix}/view/member/${mno}`, { responseType: 'blob' });
-        console.log("get profile image");
 
         return res.data;
     } catch (error) {
@@ -85,7 +83,6 @@ export const getProfileImage = async (mno) => {
 export const viewThumbnailGetByMno = async (mno) => {
     try{
         const res = await axios.get(`${prefix}/view/thumbnail/member/${mno}`, { responseType: 'blob' });
-        console.log("get thumbnail profile image");
         return res.data;
     } catch (error) {
         console.error('Error Message:', error);

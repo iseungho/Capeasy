@@ -16,7 +16,6 @@ export const useAutoLogout = () => {
             if (getCookie("member")) {
                 try {
                     const { refreshToken } = getCookie("member"); // 쿠키에서 리프레시 토큰 가져오기
-                    console.log(refreshToken)
                     if (refreshToken) {
                         const { exp } = jwtDecode(refreshToken); // exp 필드에서 만료 시간 가져오기
                         const currentTime = Math.floor(Date.now() / 1000); // 현재 시간 (초)
