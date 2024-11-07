@@ -1,6 +1,6 @@
 # Capeasy
 
-Implementation of a web application that converts a video into a spatial image
+This repository contains the frontend implementation for the Capstone-Design project, focusing on delivering a responsive and interactive user experience using React and Redux. It also includes the implementation of a web application that converts a video into a spatial image.
 
 ---
 
